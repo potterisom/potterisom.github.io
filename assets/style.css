@@ -44,11 +44,12 @@ nav {
 }
 
 nav a {
-  font-size: 14px;
+  font-size: 16px;
   color: #222;
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: border-color 0.2s;
+  font-weight:400;
 }
 
 nav a:hover {
@@ -77,21 +78,34 @@ ul {
 }
 
 ul li {
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 12px;
   line-height: 1.6;
 }
 
-ul li a {
+a {
   color: #222;
   text-decoration: none;
   border-bottom: 1px solid #ddd;
   transition: border-color 0.2s;
+  font-weight: 550;
 }
 
-ul li a:hover {
+a:hover {
   border-bottom: 1px solid #222;
 }
+
+a {
+    color: #222;
+    text-decoration: none;
+    border-bottom: 1px solid #ddd;
+    transition: border-color 0.2s;
+  }
+  
+  ul li a:hover {
+    border-bottom: 1px solid #222;
+  }
+  
 
 strong {
   font-weight: 600;
