@@ -120,6 +120,7 @@ footer {
   }
 }
 
+/* blockquotes */
 
 blockquote {
   border-left: 4px solid #ddd;
@@ -127,4 +128,11 @@ blockquote {
   margin: 16px 0;
   color: #666;
   font-style: italic;
+}
+
+blockquote br + * {
+  display: block;
+  text-align: right;
+  font-style: normal;
+  margin-top: 8px;
 }
