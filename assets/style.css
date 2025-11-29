@@ -119,3 +119,12 @@ footer {
     font-size: 15px;
   }
 }
+
+
+blockquote {
+  border-left: 4px solid #ddd;
+  padding-left: 16px;
+  margin: 16px 0;
+  color: #666;
+  font-style: italic;
+}
