@@ -150,10 +150,15 @@ blockquote {
 }
 
 blockquote p:last-child {
-    text-align: left;
+    text-align: right;
     font-style: normal;
     margin-top: 8px;
     font-size:15px;
+  }
+  
+blockquote.poem {
+    column-count: 2;
+    column-gap: 32px;
   }
 
 hr {
