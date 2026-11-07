@@ -1,0 +1,31 @@
+name: Refresh Quotebook
+
+on:
+  schedule:
+    - cron: "17 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Read the public sheet
+        run: python scripts/refresh_quotebook.py
+      - name: Publish changed quotes
+        run: |
+          if git diff --quiet -- quotebook/quotes.json; then
+            echo "No new quotes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add quotebook/quotes.json
+          git commit -m "Refresh Quotebook quotes"
+          git push
