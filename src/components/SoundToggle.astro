@@ -1,0 +1,64 @@
+---
+/** The small global sound switch. Put it on any page that makes sound. */
+---
+
+<button class="sound-toggle" type="button" data-sound-toggle aria-pressed="true">sound on</button>
+
+<script>
+  import { initSoundToggles } from '../scripts/sound';
+  initSoundToggles();
+</script>
+
+<style>
+  .sound-toggle {
+    position: fixed;
+    right: 20px;
+    bottom: 18px;
+    z-index: 40;
+    height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    font: 500 12px var(--ui);
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .sound-toggle::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 7px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    background: currentColor;
+    vertical-align: 1px;
+  }
+
+  .sound-toggle[aria-pressed='false']::before {
+    background: none;
+  }
+
+  @media (max-width: 760px) {
+    .sound-toggle {
+      right: 12px;
+      bottom: 12px;
+      background: rgba(255, 253, 249, 0.85);
+      opacity: 0.85;
+    }
+  }
+
+  .sound-toggle:hover {
+    opacity: 1;
+  }
+
+  .sound-toggle:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--red);
+    outline-offset: 2px;
+  }
+</style>

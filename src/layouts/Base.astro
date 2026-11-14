@@ -1,0 +1,45 @@
+---
+import '@fontsource/instrument-serif/latin-400.css';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-500.css';
+import '../styles/tokens.css';
+import serifWoff2 from '@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Browser chrome colour on phones; match the top of the page. */
+  themeColor?: string;
+}
+
+const {
+  title,
+  description = 'Leyla Salken studies mathematics, sprinkled with some computer science, at Williams College.',
+  themeColor = '#FBF6EE',
+} = Astro.props;
+
+const fullTitle = title ? `${title} — Leyla Salken` : 'Leyla Salken';
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={themeColor} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={serifWoff2} as="font" type="font/woff2" crossorigin />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

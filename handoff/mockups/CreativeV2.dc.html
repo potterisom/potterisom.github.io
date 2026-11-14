@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Creative — Leyla Salken</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Inter:wght@400;500;600&amp;family=Nothing+You+Could+Do&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.hang{position:absolute;transform-origin:50% 0;cursor:grab;touch-action:none;user-select:none;display:flex;flex-direction:column;align-items:center}
+.hang.held{cursor:grabbing}
+.pin{width:12px;height:30px;border-radius:3px;background:linear-gradient(90deg,#D8B48C,#B98F66);margin-bottom:-12px;z-index:2}
+@keyframes up{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{opacity:1}100%{transform:translate(-50%,-110px) scale(1.2) rotate(12deg);opacity:0}}
+.glyph{position:absolute;font-size:30px;pointer-events:none;animation:up 1.4s ease-out forwards}
+.cell{border:0;background:none;padding:0;cursor:pointer;position:relative;height:30px}
+.cell::after{content:'';position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px;border-radius:50%;background:#1D1B1A;opacity:0;transition:opacity .15s, transform .25s cubic-bezier(.3,1.8,.5,1)}
+.cell:hover::after{opacity:.12}
+.cell.on::after{opacity:1;background:var(--c)}
+.cell.on.now::after{transform:scale(1.6)}
+.cell:focus-visible{outline:2px solid #C8323C;outline-offset:-3px;border-radius:6px}
+.chip{height:36px;padding:0 14px;border-radius:999px;border:1.5px solid #1D1B1A;background:none;font:500 13px 'Inter',sans-serif;color:#1D1B1A;cursor:pointer}
+.chip.sel{background:#1D1B1A;color:#FFF8EE}
+.chip.red{background:#C8323C;border-color:#C8323C;color:#fff}
+.chip:focus-visible{outline:3px solid #C8323C;outline-offset:3px}
+.score a{color:#1D1B1A}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; position: relative; overflow: hidden; background: linear-gradient({{top}}, #F6EFE6 58%); font-family: 'Inter', sans-serif; color: #1D1B1A">
+
+<div style="position: absolute; left: 44px; top: 30px; display: flex; flex-direction: column; gap: 2px; z-index: 20">
+<a href="HomeMosque.dc.html" style="font-family: 'Instrument Serif', serif; font-size: 34px; line-height: 1; color: #1D1B1A; text-decoration: none">Leyla Salken</a>
+<span style="font-size: 14px; color: #4A4541">creative · pull a photo, or play a melody and watch the line dance</span>
+</div>
+
+<svg aria-hidden="true" width="1440" height="480" style="position: absolute; left: 0; top: 0"><path d="{{path}}" fill="none" stroke="#3A3530" stroke-width="1.6"></path></svg>
+<sc-for list="{{items}}" as="it" hint-placeholder-count="6">
+<div class="hang {{it.cls}}" onPointerDown="{{it.down}}" onPointerMove="{{it.move}}" onPointerUp="{{it.up}}" style="left: {{it.x}}px; top: {{it.y}}px; transform: translateX(-50%) rotate({{it.r}}deg)">
+<span class="pin" aria-hidden="true"></span>
+<div style="background: #FFFDF9; padding: 9px 9px 12px; box-shadow: 0 10px 22px rgba(30,25,40,.16); display: flex; flex-direction: column; gap: 6px; width: 170px">
+<img src="{{it.img}}" alt="{{it.alt}}" draggable="false" style="width: 100%; height: {{it.ih}}px; object-fit: cover; pointer-events: none">
+<span style="font-family: 'Nothing You Could Do', cursive; font-size: 16px; color: #3A3530">{{it.cap}}</span>
+</div>
+</div>
+</sc-for>
+<sc-for list="{{floats}}" as="f" hint-placeholder-count="0"><span class="glyph" aria-hidden="true" style="left: {{f.x}}px; top: {{f.y}}px; color: {{f.c}}">{{f.g}}</span></sc-for>
+
+<section aria-label="Composer" style="position: absolute; left: 44px; right: 44px; bottom: 36px; height: 330px; background: #FFFDF9; border-radius: 22px; box-shadow: 0 18px 40px rgba(30,25,40,.12); padding: 22px 28px; box-sizing: border-box; display: flex; gap: 28px">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: 'Instrument Serif', serif; font-size: 28px; line-height: 1">write a little melody</span>
+<span style="font-size: 13px; color: #6B655E">each beat bounces a photo on the line · pentatonic, so everything sounds nice</span>
+</div>
+<div style="display: flex; gap: 8px">
+<sc-for list="{{presets}}" as="p" hint-placeholder-count="3"><button class="chip {{p.cls}}" onClick="{{p.pick}}" aria-pressed="{{p.sel}}">{{p.label}}</button></sc-for>
+<button class="chip red" onClick="{{toggle}}">{{playLabel}}</button>
+<button class="chip" onClick="{{save}}">{{saveLabel}}</button>
+</div>
+</div>
+<div style="position: relative; display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); background-image: repeating-linear-gradient(transparent 0 14px, #E2D9CC 14px 15px, transparent 15px 30px); border-radius: 10px">
+<div aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: {{head}}; width: 6.25%; background: rgba(200,50,60,.08); border-radius: 8px"></div>
+<sc-for list="{{cols}}" as="c" hint-placeholder-count="16">
+<div style="display: flex; flex-direction: column; border-left: 1px solid {{c.bar}}">
+<sc-for list="{{c.cells}}" as="k" hint-placeholder-count="8">
+<button class="cell {{k.cls}}" onClick="{{k.tap}}" aria-label="{{k.aria}}" aria-pressed="{{k.on}}" style="--c: {{k.color}}"></button>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+<div class="score" style="flex: 0 0 250px; border-left: 1px solid #EDE6DA; padding-left: 24px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #C8323C">my arrangements</span>
+<a href="https://musescore.com/user/32517100/scores/7437932" style="font-family: 'Instrument Serif', serif; font-size: 24px; text-decoration: none">Aiymai ↗</a>
+<a href="https://musescore.com/user/32517100/scores/8001512" style="font-family: 'Instrument Serif', serif; font-size: 24px; text-decoration: none">Sulu Kyz ↗</a>
+<a href="https://musescore.com/user/32517100/scores/8001491" style="font-family: 'Instrument Serif', serif; font-size: 24px; text-decoration: none">Hit the Road, Jack ↗</a>
+<span style="margin-top: auto; font-family: 'Nothing You Could Do', cursive; font-size: 16px; color: #6B655E">[a note about your music]</span>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+constructor(p) {
+super(p);
+const I = [
+[170, '/_blob/6401f1080f38a1f2e961790b6bd5676d', 'Minarets and a crescent moon at blue hour', 'blue hour', 150],
+[390, '/_blob/fa6b21e46355d63cf607116a71658af4', 'Black-and-white portrait of a friend laughing', 'merey', 190],
+[610, '/_blob/8d4be80f53c163bf439f0900fc455692', 'Squash and an apple on a windowsill', 'windowsill', 210],
+[830, '/_blob/632acd1ae3420b3df98bb1e402bac9ca', 'Poker chips and cards on a wooden table', 'poker', 130],
+[1050, '/_blob/705b9e817e903227d439bb40783950d0', 'Two friends laughing on swings', 'swings', 150],
+[1270, '/_blob/712fb9e22c02564d9aab67f167e1b6fd', 'A friend in a knit hat on a bus', 'dana', 190]
+];
+this.F = [1046.5, 880, 784, 659.3, 587.3, 523.3, 440, 392];
+this.C = ['#C8323C', '#C8323C', '#B4436F', '#B4436F', '#7A4BA6', '#7A4BA6', '#4A5C9E', '#4A5C9E'];
+this.PR = { blank: [], twinkle: [[0, 5], [1, 5], [2, 2], [3, 2], [4, 1], [5, 1], [6, 2], [8, 3], [9, 3], [10, 4], [11, 4], [12, 5]], waves: [[0, 7], [1, 5], [2, 3], [3, 1], [4, 0], [5, 2], [6, 4], [7, 6], [8, 7], [10, 4], [12, 2], [14, 0]] };
+let mine = null; try { const sv = window.localStorage.getItem('leyla-melody'); if (sv) mine = JSON.parse(sv); } catch (e) {}
+const start = {}; if (!mine) this.PR.waves.forEach(([c, r]) => { start[c + '-' + r] = 1; });
+const d = new Date();
+this.state = { t: 0, h: d.getHours() + d.getMinutes() / 60, held: null, items: I.map((a, i) => ({ id: i, bx: a[0], img: a[1], alt: a[2], cap: a[3], ih: a[4], dx: 0, dy: 0, vx: 0, vy: 0 })), mine: mine || start, preset: mine ? 'mine' : 'waves', step: -1, playing: false, saved: false, floats: [] };
+this.fid = 0;
+}
+componentDidMount() {
+const loop = () => {
+const s = this.state, now = performance.now();
+const items = s.items.map(it => { if (it.id === s.held) return it; let { dx, dy, vx, vy } = it; vx += -0.11 * dx - 0.07 * vx; vy += -0.11 * dy - 0.07 * vy; dx += vx; dy += vy; if (Math.abs(dx) + Math.abs(dy) + Math.abs(vx) + Math.abs(vy) < 0.05) { dx = dy = vx = vy = 0; } return Object.assign({}, it, { dx, dy, vx, vy }); });
+this.setState({ t: s.t + 0.016, items: items, floats: s.floats.filter(f => now - f.born < 1400) });
+this.raf = requestAnimationFrame(loop);
+};
+this.raf = requestAnimationFrame(loop);
+}
+componentWillUnmount() { cancelAnimationFrame(this.raf); clearInterval(this.iv); }
+baseY(x) { return 110 + 50 * Math.sin(Math.PI * x / 1440); }
+ac() { if (this._ac === undefined) { try { const C = window.AudioContext || window.webkitAudioContext; this._ac = C ? new C() : null; } catch (e) { this._ac = null; } } return this._ac; }
+tone(f, gain, dur) { const c = this.ac(); if (!c) return; if (c.state === 'suspended') c.resume(); const t = c.currentTime; const o = c.createOscillator(), g = c.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(f * 1.01, t); o.frequency.exponentialRampToValueAtTime(f, t + .05); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .006); g.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + .05); }
+tick() {
+const st = (this.state.step + 1) % 16; const kicks = []; const fl = this.state.floats.slice();
+Object.keys(this.state.mine).forEach(k => { const [c, r] = k.split('-').map(Number); if (c === st) { this.tone(this.F[r], .12, .8); const idx = (st + r) % 6; kicks.push(idx); const it = this.state.items[idx]; fl.push({ id: ++this.fid, x: it.bx + it.dx, y: this.baseY(it.bx) + it.dy - 30, c: this.C[r], g: r % 2 ? '♪' : '♫', born: performance.now() }); } });
+this.setState({ step: st, floats: fl, items: this.state.items.map(it => kicks.includes(it.id) ? Object.assign({}, it, { vy: it.vy - 7, vx: it.vx + (Math.random() - .5) * 4 }) : it) });
+}
+renderVals() {
+const s = this.state;
+const sway = i => Math.sin(s.t * 0.9 + i * 1.3) * 3;
+const pts = [[0, 60]].concat(s.items.map((it, i) => [it.bx + it.dx + sway(i), this.baseY(it.bx) + it.dy])).concat([[1440, 60]]);
+let path = 'M' + pts[0][0] + ' ' + pts[0][1];
+for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i]; path += ' Q' + ((a[0] + b[0]) / 2) + ' ' + ((a[1] + b[1]) / 2 + 12) + ' ' + b[0] + ' ' + b[1]; }
+const day = Math.max(0, Math.min(1, Math.sin(Math.PI * (s.h - 6.4) / 11)));
+const cols = Array.from({ length: 16 }, (_, ci) => ({ bar: ci % 4 === 0 ? '#CFC4B5' : 'transparent', cells: Array.from({ length: 8 }, (_, r) => { const k = ci + '-' + r, on = !!s.mine[k]; return { on: on, color: this.C[r], cls: (on ? 'on' : '') + (on && s.step === ci ? ' now' : ''), aria: (on ? 'Remove note' : 'Add note') + ', beat ' + (ci + 1) + ', pitch ' + (8 - r), tap: () => { const m = Object.assign({}, this.state.mine); if (m[k]) delete m[k]; else { m[k] = 1; this.tone(this.F[r], .12, .7); } this.setState({ mine: m, preset: 'mine', saved: false }); } }; }) }));
+return {
+top: day > .3 ? '#E4ECF4' : '#D9D2E8',
+path: path, floats: s.floats.map(f => ({ x: Math.round(f.x), y: Math.round(f.y), c: f.c, g: f.g })),
+items: s.items.map((it, i) => ({ img: it.img, alt: it.alt, cap: it.cap, ih: it.ih, x: Math.round(it.bx + it.dx + sway(i)), y: Math.round(this.baseY(it.bx) + it.dy - 18), r: (it.dx * 0.06 + Math.sin(s.t * 0.9 + i * 1.3) * 1.6).toFixed(2), cls: s.held === it.id ? 'held' : '',
+down: e => { try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {} this.p0 = { x: e.clientX - it.dx, y: e.clientY - it.dy }; this.setState({ held: it.id }); },
+move: e => { if (this.state.held !== it.id) return; const dx = Math.max(-170, Math.min(170, e.clientX - this.p0.x)), dy = Math.max(-50, Math.min(260, e.clientY - this.p0.y)); this.setState({ items: this.state.items.map(c => c.id === it.id ? Object.assign({}, c, { dx: dx, dy: dy }) : c) }); },
+up: () => { if (this.state.held !== it.id) return; const cur = this.state.items.find(c => c.id === it.id); this.tone(196 * Math.pow(2, it.bx / 1440 * 1.6), Math.min(.2, .04 + Math.hypot(cur.dx, cur.dy) / 1500), 1.4); this.setState({ held: null }); } })),
+cols: cols, head: s.step < 0 ? '-10%' : (s.step * 6.25) + '%',
+presets: [['blank', 'blank page'], ['twinkle', 'twinkle'], ['waves', 'waves']].map(p => ({ label: p[1], sel: s.preset === p[0], cls: s.preset === p[0] ? 'sel' : '', pick: () => { const m = {}; this.PR[p[0]].forEach(([c, r]) => { m[c + '-' + r] = 1; }); this.setState({ mine: m, preset: p[0], saved: false }); } })),
+playLabel: s.playing ? 'stop' : 'play',
+toggle: () => { if (s.playing) { clearInterval(this.iv); this.setState({ playing: false, step: -1 }); } else { this.setState({ playing: true }); this.iv = setInterval(() => this.tick(), 240); } },
+saveLabel: s.saved ? 'saved ♡' : 'save mine',
+save: () => { try { window.localStorage.setItem('leyla-melody', JSON.stringify(s.mine)); } catch (e) {} this.setState({ saved: true }); }
+};
+}
+}
+</script>
+</body>
+</html>

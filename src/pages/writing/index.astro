@@ -1,0 +1,350 @@
+---
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/eb-garamond/latin-400.css';
+import '@fontsource/eb-garamond/latin-400-italic.css';
+import '@fontsource/eb-garamond/cyrillic-400.css';
+import '@fontsource/eb-garamond/cyrillic-400-italic.css';
+import '../../styles/reader.css';
+import Base from '../../layouts/Base.astro';
+import { getPieces, buildWall, WALL_COLS } from '../../lib/writing';
+
+const pieces = await getPieces();
+const tiles = buildWall(pieces);
+---
+
+<Base title="Writing" description="Essays, diaries and expository math by Leyla Salken." themeColor="#100D1D">
+  <main class="room">
+    <header class="mark">
+      <a href="/">Leyla Salken</a>
+      <p>
+        writing · drag anywhere, it never ends · <span class="fine">click</span><span class="coarse">tap</span> to read
+      </p>
+    </header>
+
+    <div class="wall" data-wall data-cols={WALL_COLS}>
+      {
+        tiles.map((t) => {
+          const p = t.piece;
+          const base = { href: p.href, 'data-tile': '', draggable: 'false' as const };
+          if (t.type === 'title') {
+            const hidden = t.focusable ? {} : { tabindex: '-1', 'aria-hidden': 'true' as const };
+            return (
+              <a {...base} {...hidden} class:list={['tile', 'title', p.kind]}>
+                <span class="label">{p.kind}</span>
+                <span class="text">{p.title}</span>
+                <span class="foot">
+                  {p.kese ? (
+                    <>
+                      {p.keseLabel} · <span class="fine">click</span>
+                      <span class="coarse">tap</span> to read
+                    </>
+                  ) : (
+                    p.keseLabel
+                  )}
+                </span>
+              </a>
+            );
+          }
+          return (
+            <a
+              {...base}
+              tabindex="-1"
+              aria-hidden="true"
+              class:list={['tile', 'quote', p.kind, { long: t.text.length > 60, ru: p.lang === 'ru' }]}
+            >
+              <span class="label">from {p.title}</span>
+              <span class="text" lang={p.lang}>“{t.text}”</span>
+              <span class="foot">{p.when}</span>
+            </a>
+          );
+        })
+      }
+    </div>
+  </main>
+  <div data-reader-host></div>
+</Base>
+
+<script>
+  import { absolutize, canPush } from '../../scripts/overlay';
+  import { initWall } from '../../scripts/wall';
+  import { initReader } from '../../scripts/reader';
+
+  const room = document.querySelector<HTMLElement>('.room')!;
+  const stage = document.querySelector<HTMLElement>('[data-wall]')!;
+  const host = document.querySelector<HTMLElement>('[data-reader-host]')!;
+  const wallTitle = document.title;
+  const wallPath = location.pathname;
+
+  stage.classList.add('is-live');
+  const wall = initWall(stage, Number(stage.dataset.cols), (link) => open(link.href, true, link));
+
+  let stopReader: (() => void) | null = null;
+  let returnTo: HTMLElement | null = null;
+
+  /** Open a piece over the wall. Its markup comes from the piece's own page. */
+  async function open(href: string, push: boolean, from?: HTMLElement) {
+    try {
+      const res = await fetch(href);
+      if (!res.ok) throw new Error(String(res.status));
+      const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+      absolutize(doc, res.url);
+      const found = doc.querySelector<HTMLElement>('[data-reader]');
+      if (!found) throw new Error('no reader');
+      const reader = document.importNode(found, true);
+      teardown();
+      reader.classList.add('is-opening');
+      host.replaceChildren(reader);
+      reader.setAttribute('role', 'dialog');
+      reader.setAttribute('aria-modal', 'true');
+      reader.setAttribute('aria-label', reader.dataset.title ?? '');
+      returnTo = from ?? null;
+      wall.pause();
+      room.inert = true;
+      stopReader = initReader(reader);
+      if (push && canPush) history.pushState({ reader: true }, '', href);
+      document.title = doc.title;
+      reader.focus({ preventScroll: true });
+    } catch {
+      location.href = href; // fall back to the piece's own page
+    }
+  }
+
+  function teardown() {
+    stopReader?.();
+    stopReader = null;
+    host.replaceChildren();
+    room.inert = false;
+    wall.resume();
+    document.title = wallTitle;
+  }
+
+  function close() {
+    if (history.state?.reader) history.back(); // popstate does the teardown
+    else {
+      if (canPush) history.replaceState(null, '', wallPath);
+      teardown();
+    }
+    returnTo?.focus({ preventScroll: true });
+    returnTo = null;
+  }
+
+  host.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('[data-reader-close]')) {
+      e.preventDefault();
+      close();
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && host.firstChild) close();
+  });
+  window.addEventListener('popstate', () => {
+    if (location.pathname === wallPath) teardown();
+    else open(location.href, false);
+  });
+</script>
+
+<style>
+  .room {
+    position: relative;
+    z-index: 0; /* own stacking context: the reader opens above everything in here */
+    min-height: 100vh;
+    min-height: 100svh;
+    background: radial-gradient(ellipse at center, #2b2547 0%, #100d1d 78%) fixed;
+    color: #f3eef8;
+  }
+
+  .mark {
+    position: absolute;
+    left: 44px;
+    top: 32px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    pointer-events: none;
+  }
+
+  .mark a {
+    align-self: flex-start;
+    font-family: var(--serif);
+    font-size: 34px;
+    line-height: 1;
+    color: inherit;
+    text-decoration: none;
+    pointer-events: auto;
+  }
+
+  .mark a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+
+  .mark p {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  /* a little dusk at the top so the name stays readable over passing tiles */
+  .room::before {
+    content: '';
+    position: fixed;
+    inset: 0 0 auto;
+    height: 150px;
+    z-index: 150;
+    background: linear-gradient(rgba(16, 13, 29, 0.92) 30%, rgba(16, 13, 29, 0));
+    pointer-events: none;
+  }
+
+  .coarse {
+    display: none;
+  }
+
+  @media (pointer: coarse) {
+    .fine {
+      display: none;
+    }
+    .coarse {
+      display: inline;
+    }
+  }
+
+  /* Without JavaScript the wall is a plain grid you scroll. */
+  .wall {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+    padding: 120px 44px 60px;
+  }
+
+  .tile {
+    height: 230px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 14px 30px rgba(5, 5, 25, 0.35);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-decoration: none;
+    background: #fffdf8;
+    color: var(--ink);
+    -webkit-user-drag: none;
+  }
+
+  .tile .label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .tile .text {
+    line-height: 1.12;
+  }
+
+  .tile .foot {
+    font-size: 11px;
+    opacity: 0.65;
+  }
+
+  .tile.title .text {
+    font-family: var(--serif);
+    font-size: 30px;
+  }
+
+  .tile.title.thoughts {
+    background: #f6efe4;
+  }
+
+  .tile.title.math {
+    background: #3a2f6e;
+    color: #f3eeff;
+  }
+
+  .tile.quote .text {
+    font-family: var(--read);
+    font-style: italic;
+    font-size: 25px;
+  }
+
+  .tile.quote.long .text {
+    font-size: 21px;
+  }
+
+  .tile.quote.math {
+    background: #ece6fa;
+  }
+
+  .tile.quote.ru {
+    background: #e5edf6;
+  }
+
+  .tile:focus-visible {
+    outline: 3px solid #f2a3b8;
+    outline-offset: 4px;
+  }
+
+  /* With JavaScript: the curved, endless wall. */
+  .wall.is-live {
+    display: block;
+    position: fixed;
+    inset: 0;
+    padding: 0;
+    overflow: hidden;
+    perspective: 1000px;
+    touch-action: none;
+    cursor: grab;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .wall.is-live.is-dragging {
+    cursor: grabbing;
+  }
+
+  .wall.is-live .tile {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 260px;
+    margin: -115px 0 0 -130px;
+    cursor: inherit;
+    will-change: transform, opacity;
+  }
+
+  @media (max-width: 600px) {
+    .mark {
+      left: 22px;
+      top: calc(20px + env(safe-area-inset-top));
+    }
+
+    .mark a {
+      font-size: 30px;
+    }
+
+    .mark p {
+      font-size: 13px;
+    }
+  }
+</style>
+
+<style is:global>
+  @keyframes reader-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+
+  .reader.is-opening {
+    animation: reader-in 0.45s cubic-bezier(0.2, 1, 0.3, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reader.is-opening {
+      animation: none;
+    }
+  }
+</style>

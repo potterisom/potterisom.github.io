@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Writing — Leyla Salken</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=EB+Garamond:ital,wght@0,400;0,500;1,400&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.stage{perspective:1000px;touch-action:none;cursor:grab;user-select:none}
+.stage.drag{cursor:grabbing}
+.tile{position:absolute;width:260px;height:230px;margin:-115px 0 0 -130px;border-radius:14px;overflow:hidden;box-shadow:0 14px 30px rgba(5,5,25,.35);padding:22px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between}
+.reader{overflow-y:auto;scrollbar-width:thin}
+.x{position:absolute;right:28px;top:24px;height:40px;padding:0 16px;border-radius:999px;border:1px solid currentColor;background:rgba(255,255,255,.15);color:inherit;font:500 14px 'Inter',sans-serif;cursor:pointer;z-index:3;backdrop-filter:blur(6px)}
+.x:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+.cup{display:inline-block;width:18px;height:10px;border:1.5px solid currentColor;border-top:0;border-radius:0 0 9px 9px;margin-right:4px;vertical-align:middle}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; position: relative; overflow: hidden; background: radial-gradient(ellipse at center, #2B2547 0%, #100D1D 78%); font-family: 'Inter', sans-serif">
+
+<div class="stage {{dragCls}}" onPointerDown="{{down}}" onPointerMove="{{move}}" onPointerUp="{{up}}" style="position: absolute; inset: 0">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="24">
+<div class="tile" onPointerDown="{{t.mark}}" style="left: {{t.x}}px; top: {{t.y}}px; transform: {{t.tf}}; opacity: {{t.o}}; z-index: {{t.z}}; background: {{t.bg}}; color: {{t.fg}}">
+<span style="font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; opacity: .7">{{t.label}}</span>
+<span style="font-family: {{t.font}}; font-style: {{t.style}}; font-size: {{t.size}}; line-height: 1.12">{{t.text}}</span>
+<span style="font-size: 11px; opacity: .65">{{t.foot}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="position: absolute; left: 44px; top: 32px; display: flex; flex-direction: column; gap: 2px; color: #F3EEF8; pointer-events: none">
+<span style="font-family: 'Instrument Serif', serif; font-size: 34px; line-height: 1">Leyla Salken</span>
+<span style="font-size: 14px; opacity: .8">writing · drag anywhere, it never ends · click to read</span>
+</div>
+
+<sc-if value="{{reading}}" hint-placeholder-val="{{ false }}">
+<div class="reader" onScroll="{{rscroll}}" style="position: absolute; inset: 0; z-index: 50; background: linear-gradient({{rtop}}, {{rbot}}); color: {{rink}}">
+<button class="x" onClick="{{close}}">← back to the wall</button>
+<article style="max-width: 640px; margin: 0 auto; padding: 120px 0 200px; display: flex; flex-direction: column; gap: 22px">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; opacity: .8">{{doc.kind}} · {{doc.date}} · <sc-for list="{{doc.cups}}" as="k" hint-placeholder-count="2"><span class="cup"></span></sc-for>{{doc.kese}}</span>
+<h1 style="margin: 0; font-family: 'Instrument Serif', 'EB Garamond', serif; font-weight: 400; font-size: 64px; line-height: 1">{{doc.title}}</h1>
+<sc-for list="{{doc.paras}}" as="pp" hint-placeholder-count="4"><p style="margin: 0; font-family: 'EB Garamond', serif; font-size: 23px; line-height: 1.6">{{pp.t}}</p></sc-for>
+<p style="margin: 20px 0 0; text-align: center; font-size: 26px; color: #E8708A">♥</p>
+</article>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+constructor(p) {
+super(p);
+this.D = {
+room: { kind: 'thoughts', title: 'the joy of living with roommates', date: 'August 4, 2025', kese: 2, paras: [
+'last year, i spent a summer in new york. i found a cute studio in brooklyn where i could live alone with a bunch of plants and have my peace. i thought my summer would be lovely—i finally had a big-girl corporate job in new york city, my own little apartment, an independent life.',
+'as weeks went by, i started feeling increasingly lonelier—the sink constantly filled up with dishes that would never get done, every day i had to make breakfast all over again, the mysterious dead cockroach in the corner terrified the shit out of me so i had to facetime my brother to finally find the courage to pick it up and trash it (that occupied me for a whole afternoon). going to the laundromat was exhausting and washing the floor took up a whole day.',
+'sometimes i would rot all day and just watch tv in my apartment and not even step outside, i would get food delivered to my door and refuse to interact with a single person for a whole day. it felt isolating, and i isolated myself. i could feel my brain melting from all the dopamine i was hitting it with, and my job wasn’t as fun as i thought it would be. i felt lonely in “the best city in the world” because my friends from college where not there and i didn’t vibe with the other interns at my job. i felt forgotten.',
+'this year, i spent a summer at dartmouth. i lived with two roommates in a tiny apartment, and i was the lucky winner of the (only) top bunk. i have never in my life picked “double” or “triple” as my top option for any type of housing, because i’ve always valued my personal space more than the opportunity to bond with someone else.',
+'but alas, i have discovered the joy of living with roommates. i love it when i come back home and the dishes in the sink just disappear, the dining chairs change positions, nikes and crocs are missing (my roommates are wearing them today), irene’s slippers relocated from under the dining table to her desk, and katie’s wet swimsuit is hanging in the bathroom (she already did her daily dip in the connecticut river). i love knowing that life is happening around me, that there is someone who relates to me, and that we’re all sharing the struggle of the routine together. i love that even though we’re not friends, we co-exist and that makes me a hundred times happier than i was last summer.',
+'they say being alone is good and healthy for you, and i agree. i guess i forgot how important human interaction is to my survival, even in minuscule doses that feel like drops in the ocean of my life. my summer roommates created a puddle in what otherwise would have been an empty desert.',
+'co-exist!'] },
+io: { kind: 'thoughts', title: 'diaries of an orientation leader', date: 'August 28, 2024', kese: 1, paras: [
+'i’m learning so much from my freshmen at the international orientation. being a leader is so much work considering it’s unpaid but it’s so cool to see the effect of your work when people who would otherwise never talk to each other share conversations and bond over small stuff. like hell yeah',
+'also realized everybody is in their own little bubbles and everybody can sometimes feel lonely and left out regardless of being an athlete/frat boy/minority. it’s a universal human experience and it took me so long to realize that i am the one responsible for initiating conversations and befriending others and making them feel like they belong in every space where i am. saying hi, smiling, looking into someone’s eyes and acknowledging their existence can go such a long way to make people feel welcome in any social setting and i am so excited to be around wonderful people this year.',
+'i love the international community, i love my college and i love how every little interaction can teach me soo much about how to be a better human. my freshmen think i got it figured out but the truth is i am just as lost as they are.',
+'i am learning to be graceful and forgiving, not to hold people’s ignorance and mistakes against them, not to take things personally and just be here to enjoy our shared human experience. it is such a privilege for me to be able to live this life and i am soo lucky that i get to interact with a bunch of new faces.',
+'in high school i thought all the volunteering positions were a scam because you don’t get anything out of them, but honestly interacting with others and forcing yourself to take agency in uncomfortable situations is the best way to become a better communicator (and that’s priceless). challenge yourself and do something you’re afraid of every day !!!'] },
+ws: { kind: 'thoughts', title: 'freshman year winter study', date: 'January 10, 2024', kese: 1, paras: [
+'убрала бекон из сэндвича на завтраке. йогурт был вкусным. бананов не было и я расстроилась. пошла учиться в библиотеку но только заказала одежду. на уроке был гость спикер и я все два часа спорила в голове, считаю ли я его красивым. конспекты стали лучше с прошлого урока. сэндвич был на удивление вкусным. увидела друзей в автобусе. не люблю китайский акцент. боюсь стоять в очереди одна. учусь надевать лыжи. в лыжном курорте идет снег и красиво. падаю на выходе со ски лифта. кататься легко, а поворачивать весело. сижу с красивой девочкой из вегаса. еле как продерживаюсь на крутом повороте и не падаю. горжусь собой. соглашаюсь пойти на крутой склон. ошибка. еду по склону. не могу остановиться. хочу врезаться в столб но решаю увернуться. чуть не врезалась в ребенка. доехала до конца и упала в сторону забора. улыбаюсь. снимаю лыжи и иду пешком. инструктор милая. я счастлива, что не сломала ничего. слушаю грустную музыку. на улице буран. ужин обычный но необыкновенно вкусный. много болтаю, а они меня слушают. подаю мяч в аут. мой краш побрился и отрастил волосы. он мне все еще нравится. обнимаю подругу. краш издевается и постоянно скидывает мячи на меня. злюсь на себя потому что он нравится еще больше. играет белая музыка. наушники разрядились. Уилл придержал мне дверь. на улице дождь и никого нет. вижу большого снеговика и прикольные следы обуви. в коммон руме Пэт, люблю его улыбку. ложусь на снег. закрываю глаза.',
+'просыпаюсь.'] },
+euler: { kind: 'math', title: 'How to stumble onto the Euler product formula', date: 'expository', kese: 3, paras: ['A short introduction for high-school students: understanding and discovering the Euler product formula.', '[the full paper goes here, typeset for the web with the equations rendered]'] },
+caus: { kind: 'math', title: 'Adventures in causality', date: 'in progress', kese: 0, paras: ['My work with Prof. Bijan Mazaheri at Dartmouth.', '[in progress]'] }
+};
+const T = (k) => ['title', k]; const Q = (k, q) => ['quote', k, q];
+this.TILES = [
+T('room'), Q('io', 'my freshmen think i got it figured out but the truth is i am just as lost as they are'), T('euler'), Q('ws', 'ложусь на снег. закрываю глаза.'), Q('room', 'i love knowing that life is happening around me'), T('io'),
+Q('room', 'the lucky winner of the (only) top bunk'), T('ws'), Q('io', 'challenge yourself and do something you’re afraid of every day !!!'), T('caus'), Q('ws', 'учусь надевать лыжи.'), Q('room', 'a puddle in what otherwise would have been an empty desert'),
+Q('euler', 'for high-school students'), Q('io', 'saying hi, smiling, looking into someone’s eyes'), T('room'), Q('ws', 'на улице буран.'), Q('room', 'i felt forgotten.'), Q('caus', 'still brewing'),
+Q('io', 'i am learning to be graceful and forgiving'), T('euler'), Q('room', 'co-exist!'), Q('ws', 'просыпаюсь.'), T('io'), Q('io', 'i love the international community')
+];
+this.state = { ox: 0, oy: 0, vx: 0, vy: 0, drag: false, open: null, rp: 0 };
+}
+componentDidMount() { const step = () => { const s = this.state; if (!s.drag && s.open === null) { const vx = s.vx * .94, vy = s.vy * .94; this.setState({ ox: s.ox + vx - .15, oy: s.oy + vy - .04, vx: vx, vy: vy }); } this.raf = requestAnimationFrame(step); }; this.raf = requestAnimationFrame(step); }
+componentWillUnmount() { cancelAnimationFrame(this.raf); }
+hex(c) { return c.startsWith('#') ? c : '#' + c.match(/\d+/g).map(v => (+v).toString(16).padStart(2, '0')).join(''); }
+mix(a, b, t) { a = this.hex(a); b = this.hex(b); const q = x => [1, 3, 5].map(i => parseInt(x.slice(i, i + 2), 16)); const A = q(a), B = q(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',') + ')'; }
+key(h, K, i) { for (let j = 0; j < K.length - 1; j++) if (h >= K[j][0] && h <= K[j + 1][0]) return this.mix(K[j][i], K[j + 1][i], (h - K[j][0]) / (K[j + 1][0] - K[j][0])); return K[K.length - 1][i]; }
+renderVals() {
+const s = this.state;
+const CW = 300, RH = 270, W = 6 * CW, H = 4 * RH, mod = (a, n) => ((a % n) + n) % n;
+const style = (t) => {
+const d = this.D[t[1]]; const math = d.kind === 'math'; const ru = t[1] === 'ws';
+if (t[0] === 'title') return { label: d.kind, text: d.title, foot: d.kese ? d.kese + ' kese · click to read' : 'still brewing', bg: math ? '#3A2F6E' : '#F6EFE4', fg: math ? '#F3EEFF' : '#1D1B1A', font: "'Instrument Serif', 'EB Garamond', serif", style: 'normal', size: '30px' };
+return { label: 'from ' + d.title, text: '“' + t[2] + '”', foot: d.date, bg: math ? '#ECE6FA' : (ru ? '#E5EDF6' : '#FFFDF8'), fg: '#1D1B1A', font: "'EB Garamond', serif", style: 'italic', size: t[2].length > 60 ? '21px' : '25px' };
+};
+const tiles = this.TILES.map((t, i) => {
+const c = i % 6, r = Math.floor(i / 6);
+const x = mod(c * CW + s.ox, W) - (W - 1440) / 2 + CW / 2 - 70, y = mod(r * RH + s.oy, H) - (H - 900) / 2 + RH / 2 - 40;
+const dx = (x - 720) / 720, dy = (y - 450) / 450, d = Math.min(1.6, Math.hypot(dx, dy));
+return Object.assign({ x: Math.round(x), y: Math.round(y), tf: 'rotateY(' + (dx * 34).toFixed(1) + 'deg) rotateX(' + (-dy * 26).toFixed(1) + 'deg) scale(' + (1 - .3 * d * d / 2.56).toFixed(3) + ')', o: Math.max(.2, 1 - d * .42).toFixed(2), z: Math.round(100 - d * 50), mark: () => { this.downKey = t[1]; } }, style(t));
+});
+const doc = s.open ? this.D[s.open] : this.D.room;
+const h = 7 + s.rp * 15;
+const K = [[7, '#9CC0E6', '#F7E4CF'], [12, '#B8D4EE', '#F4ECE0'], [16, '#A9B9DC', '#F3D9BE'], [17.6, '#5A5F9E', '#E9957A'], [19, '#2C2F66', '#6E4E7E'], [22, '#0B0F28', '#1A1F3F']];
+const dark = h > 18.4;
+return {
+tiles: tiles, dragCls: s.drag ? 'drag' : '', reading: s.open !== null,
+doc: { kind: doc.kind, date: doc.date, title: doc.title, kese: doc.kese ? doc.kese + ' kese' : 'still brewing', cups: Array.from({ length: doc.kese }, (_, i) => ({ i })), paras: doc.paras.map(t => ({ t: t })) },
+rtop: this.key(h, K, 1), rbot: this.key(h, K, 2), rink: dark ? '#F3EEF8' : '#1D1B1A',
+rscroll: e => { const el = e.currentTarget; this.setState({ rp: Math.min(1, el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight)) }); },
+close: () => this.setState({ open: null, rp: 0 }),
+down: e => { try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {} this.p0 = { x: e.clientX, y: e.clientY }; this.lp = { x: e.clientX, y: e.clientY }; this.setState({ drag: true, vx: 0, vy: 0 }); },
+move: e => { if (!this.state.drag) return; const dx = e.clientX - this.lp.x, dy = e.clientY - this.lp.y; this.lp = { x: e.clientX, y: e.clientY }; this.setState({ ox: this.state.ox + dx, oy: this.state.oy + dy, vx: dx, vy: dy }); },
+up: e => { const moved = this.p0 ? Math.hypot(e.clientX - this.p0.x, e.clientY - this.p0.y) : 99; const k = this.downKey; this.downKey = null; this.setState({ drag: false, open: moved < 6 && k ? k : this.state.open, rp: 0 }); }
+};
+}
+}
+</script>
+</body>
+</html>
