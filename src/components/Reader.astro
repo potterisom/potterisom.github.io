@@ -1,0 +1,34 @@
+---
+import { render } from 'astro:content';
+import type { Piece } from '../lib/writing';
+
+interface Props {
+  piece: Piece;
+}
+const { piece } = Astro.props;
+const { Content } = await render(piece.entry);
+---
+
+<div class="reader" data-reader data-title={piece.title} tabindex="-1">
+  <div class="reader-bar">
+    <a class="reader-x" href="/writing/" data-reader-close>← back to the wall</a>
+  </div>
+  <article>
+    <p class="reader-meta">
+      {piece.kind} · {piece.when} ·
+      <span aria-hidden="true">{Array.from({ length: piece.kese }, () => <span class="cup" />)}</span>{piece.keseLabel}
+    </p>
+    <h1>{piece.title}</h1>
+    <div class="reader-body" lang={piece.lang}>
+      <Content />
+    </div>
+    {
+      piece.entry.data.pdf && (
+        <p class="reader-pdf">
+          <a href={piece.entry.data.pdf}>read the paper (pdf) ↗</a>
+        </p>
+      )
+    }
+    <p class="reader-heart" aria-hidden="true">♥</p>
+  </article>
+</div>

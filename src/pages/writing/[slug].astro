@@ -1,0 +1,37 @@
+---
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/eb-garamond/latin-400.css';
+import '@fontsource/eb-garamond/latin-400-italic.css';
+import '@fontsource/eb-garamond/cyrillic-400.css';
+import '../../styles/reader.css';
+import Base from '../../layouts/Base.astro';
+import Reader from '../../components/Reader.astro';
+import { getPieces, type Piece } from '../../lib/writing';
+
+export async function getStaticPaths() {
+  const pieces = await getPieces();
+  return pieces.map((piece) => ({ params: { slug: piece.slug }, props: { piece } }));
+}
+
+interface Props {
+  piece: Piece;
+}
+const { piece } = Astro.props;
+const firstLine = (piece.entry.body ?? '').trim().split('\n')[0].slice(0, 155);
+---
+
+<Base title={piece.title} description={firstLine} themeColor="#9CC0E6">
+  <main>
+    <Reader piece={piece} />
+  </main>
+</Base>
+
+<script>
+  import { initReader } from '../../scripts/reader';
+
+  const el = document.querySelector<HTMLElement>('[data-reader]');
+  if (el) {
+    initReader(el);
+    el.focus({ preventScroll: true }); // so arrow keys and space scroll the piece
+  }
+</script>

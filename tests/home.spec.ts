@@ -61,6 +61,7 @@ test('home: wiping clears the glass, and it grows back', async ({ page }) => {
       await page.mouse.move(row % 2 ? 30 : width * 0.62, y, { steps: 14 });
     }
   }
+  await page.waitForTimeout(150); // the fog repaints on the next frame
   const after = await fogCover(page);
   expect(after).toBeLessThan(0.8);
   await shot(page, 'wiped');

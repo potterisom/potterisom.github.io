@@ -1,0 +1,150 @@
+/* The reader (spec §2, Writing). Global on purpose: the wall page loads a
+   piece's markup from its own page and drops it into an overlay. */
+.reader {
+  --sky-top: #9cc0e6;
+  --sky-bottom: #f7e4cf;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  background: linear-gradient(var(--sky-top), var(--sky-bottom));
+  color: var(--ink);
+  transition: color 0.6s;
+}
+
+.reader.is-night {
+  color: #f3eef8;
+}
+
+.reader-bar {
+  position: sticky;
+  top: 0;
+  height: 0;
+  z-index: 3;
+}
+
+.reader-x {
+  position: absolute;
+  right: 28px;
+  top: 24px;
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: rgba(255, 255, 255, 0.15);
+  color: inherit;
+  font: 500 14px var(--ui);
+  text-decoration: none;
+  white-space: nowrap;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.reader-x:focus-visible,
+.reader a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.reader article {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 120px 0 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.reader-meta {
+  font: 600 12px var(--ui);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* a kese: a small handleless tea cup, one per ~300 words */
+.cup:first-child {
+  margin-left: 4px;
+}
+
+.cup {
+  display: inline-block;
+  width: 18px;
+  height: 10px;
+  border: 1.5px solid currentColor;
+  border-top: 0;
+  border-radius: 0 0 9px 9px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.reader h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 64px;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.reader-body {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  font-family: var(--read);
+  font-size: 23px;
+  line-height: 1.6;
+}
+
+.reader-body a,
+.reader-pdf a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+.reader-pdf {
+  font: 500 15px var(--ui);
+}
+
+.reader-heart {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 26px;
+  color: var(--red);
+  transition: color 0.6s;
+}
+
+.reader.is-night .reader-heart {
+  color: #e8708a;
+}
+
+@media (max-width: 1040px) {
+  /* no room beside the column: the button scrolls away with the page top */
+  .reader-bar {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .reader article {
+    padding: 104px 24px 140px;
+    gap: 20px;
+  }
+
+  .reader-x {
+    right: 20px;
+    top: calc(20px + env(safe-area-inset-top));
+  }
+
+  .reader h1 {
+    font-size: 46px;
+  }
+
+  .reader-body {
+    font-size: 20px;
+    gap: 20px;
+  }
+}
