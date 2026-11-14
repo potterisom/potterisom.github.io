@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Leyla Salken</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+@keyframes slow{from{transform:scale(1.04)}to{transform:scale(1.12) translate(-1%,-1%)}}
+.photo{animation:slow 40s ease-in-out infinite alternate}
+.lnk{color:#FFFFFF;text-decoration:none;font:500 16px 'Inter',sans-serif;padding-bottom:3px;border-bottom:1px solid rgba(255,255,255,.4)}
+.lnk:hover{border-bottom-color:#fff}
+.lnk:focus-visible{outline:2px solid #fff;outline-offset:4px}
+</style>
+</helmet>
+<div onPointerMove="{{wipe}}" style="width: 1440px; height: 900px; position: relative; overflow: hidden; background: #1B2340; font-family: 'Inter', sans-serif; color: #fff; cursor: crosshair">
+<img class="photo" src="/_blob/6401f1080f38a1f2e961790b6bd5676d" alt="Minarets and a crescent moon in blue dusk light" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,14,40,0) 45%, rgba(10,14,40,.55))"></div>
+
+<div style="position: absolute; left: 72px; bottom: 72px; display: flex; flex-direction: column; gap: 18px; max-width: 720px">
+<h1 style="margin: 0; font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 132px; line-height: .9; letter-spacing: -0.01em; text-shadow: 0 2px 30px rgba(0,0,0,.25)">Leyla Salken</h1>
+<p style="margin: 0; font-size: 19px; line-height: 1.5; max-width: 560px; text-shadow: 0 1px 12px rgba(0,0,0,.4)">I study mathematics, sprinkled with some computer science, at Williams. Oxford last year; Jane Street this summer.</p>
+<nav aria-label="Main" style="display: flex; gap: 28px; margin-top: 6px">
+<a class="lnk" href="#">writing</a><a class="lnk" href="#">creative</a><a class="lnk" href="TimelineV.dc.html">timeline</a><a class="lnk" href="#">email</a>
+</nav>
+</div>
+
+<canvas ref="{{fogRef}}" width="1440" height="900" aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none"></canvas>
+<span style="position: absolute; right: 40px; top: 34px; font-size: 13px; color: #2B3550; background: rgba(255,255,255,.55); padding: 6px 12px; border-radius: 999px; backdrop-filter: blur(6px)">it’s cold outside — wipe the glass</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+constructor(p) {
+super(p);
+this.drips = [];
+this.fogRef = el => { if (el && el !== this.cv) { this.cv = el; this.ctx = el.getContext('2d'); this.fog(); } };
+}
+componentDidMount() {
+this.iv = setInterval(() => this.frame(), 50);
+}
+componentWillUnmount() { clearInterval(this.iv); }
+fog() {
+const c = this.ctx; if (!c) return;
+c.globalCompositeOperation = 'source-over'; c.clearRect(0, 0, 1440, 900);
+const g = c.createLinearGradient(0, 0, 0, 900); g.addColorStop(0, 'rgba(222,228,238,.88)'); g.addColorStop(1, 'rgba(206,214,230,.93)');
+c.fillStyle = g; c.fillRect(0, 0, 1440, 900);
+for (let i = 0; i < 1400; i++) { const x = Math.random() * 1440, y = Math.random() * 900, r = Math.random() * 1.8 + .3; c.fillStyle = Math.random() < .5 ? 'rgba(255,255,255,.45)' : 'rgba(150,160,185,.25)'; c.beginPath(); c.arc(x, y, r, 0, 6.3); c.fill(); }
+const etch = () => { c.globalCompositeOperation = 'destination-out'; c.fillStyle = 'rgba(0,0,0,.9)'; c.font = '86px "Instrument Serif", Georgia, serif'; c.save(); c.translate(1040, 300); c.rotate(-0.06); c.fillText('hi ♡', 0, 0); c.restore(); c.globalCompositeOperation = 'source-over'; };
+try { document.fonts.load('86px "Instrument Serif"').then(etch, etch); } catch (e) { etch(); }
+}
+frame() {
+const c = this.ctx; if (!c) return;
+c.globalCompositeOperation = 'source-over'; c.fillStyle = 'rgba(214,221,234,.01)'; c.fillRect(0, 0, 1440, 900);
+if (Math.random() < .04 && this.drips.length < 6) this.drips.push({ x: Math.random() * 1440, y: Math.random() * 300, v: 1 + Math.random() * 1.5, w: 2 + Math.random() * 2.5, life: 120 + Math.random() * 160 });
+c.globalCompositeOperation = 'destination-out';
+this.drips.forEach(d => { c.fillStyle = 'rgba(0,0,0,.55)'; c.beginPath(); c.ellipse(d.x, d.y, d.w, d.w * 1.4, 0, 0, 6.3); c.fill(); d.y += d.v; d.x += Math.sin(d.y / 30) * .3; d.life--; });
+c.globalCompositeOperation = 'source-over';
+this.drips = this.drips.filter(d => d.life > 0 && d.y < 920);
+}
+renderVals() {
+return {
+fogRef: this.fogRef,
+wipe: e => {
+const c = this.ctx; if (!c) return; const r = this.cv.getBoundingClientRect();
+const x = (e.clientX - r.left) * 1440 / r.width, y = (e.clientY - r.top) * 900 / r.height;
+c.globalCompositeOperation = 'destination-out';
+const g = c.createRadialGradient(x, y, 0, x, y, 80); g.addColorStop(0, 'rgba(0,0,0,.9)'); g.addColorStop(.6, 'rgba(0,0,0,.55)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+c.fillStyle = g; c.beginPath(); c.arc(x, y, 80, 0, 6.3); c.fill(); c.globalCompositeOperation = 'source-over';
+if (Math.random() < .08) this.drips.push({ x: x + (Math.random() - .5) * 60, y: y + 40, v: 1.2 + Math.random(), w: 2 + Math.random() * 2, life: 140 });
+}
+};
+}
+}
+</script>
+</body>
+</html>

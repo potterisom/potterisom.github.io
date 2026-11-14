@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Projects: exploded view + posts — Leyla Salken</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=EB+Garamond:ital,wght@0,400;0,500;1,400&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.part{position:absolute;left:720px;top:470px;width:250px;margin:-60px 0 0 -125px;padding:18px 20px;border-radius:16px;background:#FFFDF9;box-shadow:0 18px 40px rgba(20,20,50,.16);box-sizing:border-box;display:flex;flex-direction:column;gap:6px;transition:transform .7s cubic-bezier(.2,1.35,.3,1),opacity .4s,box-shadow .2s;border:0;text-align:left;font:inherit;color:#1D1B1A;cursor:pointer}
+.part:hover{box-shadow:0 22px 46px rgba(20,20,50,.24)}
+.part:focus-visible{outline:3px solid #C8323C;outline-offset:4px}
+.core{position:absolute;left:720px;top:470px;width:300px;height:220px;margin:-110px 0 0 -150px;border-radius:20px;border:0;padding:0;cursor:pointer;overflow:hidden;box-shadow:0 30px 60px rgba(20,20,50,.25);transition:transform .5s cubic-bezier(.2,1.4,.3,1)}
+.core:focus-visible{outline:3px solid #C8323C;outline-offset:6px}
+.tab{height:40px;padding:0 16px;border-radius:999px;border:1px solid #1D1B1A;background:none;font:500 14px 'Inter',sans-serif;cursor:pointer;color:#1D1B1A}
+.tab.sel{background:#1D1B1A;color:#FFF8EE}
+.tab:focus-visible,.read:focus-visible,.toc:focus-visible,.back:focus-visible{outline:2px solid #C8323C;outline-offset:3px}
+.ln{transition:opacity .5s}
+.read{height:44px;padding:0 20px;border-radius:999px;border:0;background:#C8323C;color:#fff;font:500 15px 'Inter',sans-serif;cursor:pointer;transition:opacity .4s, transform .5s cubic-bezier(.2,1.4,.3,1)}
+.post{overflow-y:auto;scroll-behavior:smooth}
+.toc{display:flex;flex-direction:column;gap:3px;text-align:left;border:0;background:#FFFDF9;border-radius:12px;padding:12px 14px;font:inherit;color:#1D1B1A;cursor:pointer;box-shadow:0 6px 16px rgba(20,20,50,.08);transition:transform .3s cubic-bezier(.2,1.4,.3,1),background .2s}
+.toc.on{background:#1D1B1A;color:#FFF8EE;transform:translateX(8px)}
+.back{height:40px;padding:0 16px;border-radius:999px;border:1px solid #1D1B1A;background:#FBF6EE;font:500 14px 'Inter',sans-serif;cursor:pointer;color:#1D1B1A}
+.post p{margin:0;font-family:'EB Garamond',serif;font-size:22px;line-height:1.65;color:#2A2622}
+</style>
+</helmet>
+<div onMouseLeave="{{leave}}" style="width: 1440px; height: 900px; position: relative; overflow: hidden; background: radial-gradient(ellipse at 50% 50%, #FBF6EE, #E9E1D4 80%); font-family: 'Inter', sans-serif; color: #1D1B1A">
+<div style="position: absolute; left: 56px; top: 40px; display: flex; flex-direction: column; gap: 4px">
+<a href="HomeMosque.dc.html" style="font-family: 'Instrument Serif', serif; font-size: 34px; line-height: 1; color: inherit; text-decoration: none">Leyla Salken</a>
+<span style="font-size: 14px; color: #5A5550">projects · hover to take one apart, click a part to read about it</span>
+</div>
+<div role="group" aria-label="Project" style="position: absolute; right: 56px; top: 46px; display: flex; gap: 8px">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button class="tab {{t.cls}}" onClick="{{t.pick}}" aria-pressed="{{t.sel}}">{{t.t}}</button></sc-for>
+</div>
+
+<svg aria-hidden="true" width="1440" height="900" style="position: absolute; inset: 0">
+<sc-for list="{{parts}}" as="p" hint-placeholder-count="5"><line class="ln" x1="720" y1="470" x2="{{p.lx}}" y2="{{p.ly}}" stroke="#C9BBA8" stroke-width="1.5" stroke-dasharray="4 6" opacity="{{lineO}}"></line></sc-for>
+</svg>
+<sc-for list="{{parts}}" as="p" hint-placeholder-count="5">
+<button class="part" onClick="{{p.go}}" tabindex="{{p.tab}}" style="transform: {{p.tf}}; opacity: {{partO}}">
+<span style="font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #C8323C">{{p.label}}</span>
+<span style="font-size: 15px; line-height: 1.45">{{p.text}}</span>
+<span style="font-size: 12px; color: #8A847C">read this part →</span>
+</button>
+</sc-for>
+
+<button class="core" onMouseEnter="{{enter}}" onClick="{{lock}}" aria-expanded="{{open}}" aria-label="{{coreAria}}" style="transform: scale({{coreS}})">
+<sc-if value="{{isSite}}" hint-placeholder-val="{{ true }}"><img src="/_blob/6401f1080f38a1f2e961790b6bd5676d" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><span style="position: absolute; left: 18px; bottom: 16px; font-family: 'Instrument Serif', serif; font-size: 38px; line-height: .9; color: #fff; text-align: left">This<br>website</span></sc-if>
+<sc-if value="{{isFood}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; inset: 0; background: #C8323C; display: flex; align-items: flex-end; padding: 18px; box-sizing: border-box; font-family: 'Instrument Serif', serif; font-size: 36px; line-height: .95; color: #fff; text-align: left">Free Food<br>at Williams</span></sc-if>
+<sc-if value="{{isNext}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; inset: 0; background: #2E3266; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #F3EEF8">[another project]</span></sc-if>
+</button>
+<button class="read" onClick="{{readAll}}" style="position: absolute; left: 50%; top: 600px; transform: translateX(-50%) scale({{readS}}); opacity: {{partO}}">read the whole story →</button>
+<span style="position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); font-size: 13px; color: #6B655E">{{hint}}</span>
+
+<sc-if value="{{reading}}" hint-placeholder-val="{{ false }}">
+<div class="post" ref="{{postRef}}" onScroll="{{pscroll}}" style="position: absolute; inset: 0; z-index: 50; background: #FBF6EE">
+<div style="display: flex; gap: 64px; max-width: 1180px; margin: 0 auto; padding: 0 40px">
+<aside aria-label="Sections" style="flex: 0 0 240px; position: sticky; top: 0; align-self: flex-start; padding-top: 40px; display: flex; flex-direction: column; gap: 10px; height: 860px; box-sizing: border-box">
+<button class="back" onClick="{{closePost}}" style="align-self: flex-start; margin-bottom: 14px">← back to the parts</button>
+<sc-for list="{{toc}}" as="c" hint-placeholder-count="5">
+<button class="toc {{c.cls}}" onClick="{{c.go}}" aria-current="{{c.cur}}"><span style="font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; opacity: .75">{{c.n}}</span><span style="font-size: 14px; line-height: 1.35">{{c.label}}</span></button>
+</sc-for>
+</aside>
+<article style="flex: 1; max-width: 680px; padding: 70px 0 300px; display: flex; flex-direction: column; gap: 26px">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #C8323C">{{post.kicker}}</span>
+<h1 style="margin: 0; font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 72px; line-height: .98">{{post.title}}</h1>
+<p style="font-style: italic; color: #6B655E">{{post.dek}}</p>
+<sc-if value="{{post.hasHero}}" hint-placeholder-val="{{ true }}"><figure style="margin: 6px 0; display: flex; flex-direction: column; gap: 10px"><img src="{{post.hero}}" alt="{{post.heroAlt}}" style="width: 100%; height: 380px; object-fit: cover; border-radius: 14px"><figcaption style="font-size: 13px; color: #8A847C">{{post.heroCap}}</figcaption></figure></sc-if>
+<sc-for list="{{post.secs}}" as="sec" hint-placeholder-count="5">
+<section data-sec="{{sec.i}}" style="display: flex; flex-direction: column; gap: 18px; padding-top: 30px">
+<span style="font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #C8323C">{{sec.n}}</span>
+<h2 style="margin: 0; font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 42px; line-height: 1.05">{{sec.h}}</h2>
+<sc-for list="{{sec.paras}}" as="pp" hint-placeholder-count="2"><p>{{pp.t}}</p></sc-for>
+<sc-if value="{{sec.hasQuote}}" hint-placeholder-val="{{ false }}"><blockquote style="margin: 8px 0; padding-left: 24px; border-left: 0; font-family: 'Instrument Serif', serif; font-size: 34px; line-height: 1.15; color: #C8323C">{{sec.quote}}</blockquote></sc-if>
+</section>
+</sc-for>
+<p style="text-align: center; color: #C8323C; font-size: 26px; margin-top: 30px">♥</p>
+</article>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+constructor(p) {
+super(p);
+this.P = {
+site: { t: 'This website', kicker: 'project · nov 2026', dek: '[one line: what this post is about — draft text below, rewrite it in your voice]', hero: '/_blob/6401f1080f38a1f2e961790b6bd5676d', heroAlt: 'The homepage: minarets at blue hour behind fogged glass', heroCap: 'The homepage, after five rounds of sketches.',
+parts: [
+['the problem', 'The old site was hand-written HTML with almost no design.', 'Where it started', ['My old site was a few hand-written HTML pages: a list of essays, two math papers, some photos.', '[in your words: why you wanted to rebuild it, and what you wanted to add — projects, more writing, photography]'], ''],
+['for whom', 'People deciding whether to work with me, who spend a few seconds looking.', 'Who it’s for', ['People land on a personal site for a few seconds and decide what they think. So the goal wasn’t to list everything I’ve done; it was to show product taste.', '[in your words: who you most want to reach]'], '“The goal of the website is to show my product taste.”'],
+['the key decision', 'One photograph behind fogged glass, instead of a busy homepage.', 'How I got to the fog', ['I borrowed Felix Rieseberg’s process: dozens of rough sketches, ruthless notes, and riffing only on what survived. The first eight directions were all derivative. The next rounds were themed — tea, cards, chips — and generic underneath.', 'Then I asked a different question: what is this website, physically? Twelve answers later, one sketch — fogged glass you wipe with your cursor — got a note in all caps. The final homepage is just that, over one photograph.'], '“slick and simple and cool”'],
+['built with', 'A static site on GitHub Pages; sketches and drafts made with Claude.', 'How it’s built', ['The fog is a canvas you erase with the cursor; it slowly grows back. Every sound is generated in the browser — bubbles, not static. The site is static and hosted on GitHub Pages, so adding an essay or a project is one file.', '[anything technical you want to add]'], ''],
+['what’s next', '[what you’ll add next]', 'What’s next', ['[what you’re adding next, and what you’d change]'], '']] },
+food: { t: 'Free Food at Williams', kicker: 'project · in progress', dek: '[one line about the app]', hero: '', heroAlt: '', heroCap: '',
+parts: [
+['the problem', '[the problem, in your words]', 'The problem', ['[the problem, in your words]'], ''],
+['for whom', 'Williams students who want free food.', 'Who it’s for', ['[who uses it and how]'], ''],
+['the key decision', 'Build on mock data first; wire up the real pipeline later.', 'Mock data first', ['I built the whole experience on fake events before touching real data, so the design could be right before the plumbing.', '[why — in your words]'], ''],
+['built with', '[stack]', 'How it’s built', ['[stack and architecture]'], ''],
+['what’s next', 'An ingestion pipeline for real events.', 'What’s next', ['[the ingestion pipeline, and what else]'], '']] },
+next: { t: '[another project]', kicker: 'project', dek: '[…]', hero: '', heroAlt: '', heroCap: '', parts: [['the problem', '[…]', '[…]', ['[…]'], ''], ['for whom', '[…]', '[…]', ['[…]'], ''], ['the key decision', '[…]', '[…]', ['[…]'], ''], ['built with', '[…]', '[…]', ['[…]'], ''], ['what’s next', '[…]', '[…]', ['[…]'], '']] }
+};
+this.state = { k: 'site', hover: false, locked: false, reading: false, sec: 0 };
+this.postRef = el => { this.post = el; };
+}
+ac() { if (this._ac === undefined) { try { const C = window.AudioContext || window.webkitAudioContext; this._ac = C ? new C() : null; } catch (e) { this._ac = null; } } return this._ac; }
+pop(up) { const c = this.ac(); if (!c) return; if (c.state === 'suspended') c.resume(); const t = c.currentTime; const o = c.createOscillator(), g = c.createGain(); o.frequency.setValueAtTime(up ? 400 : 1200, t); o.frequency.exponentialRampToValueAtTime(up ? 1200 : 400, t + .06); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.08, t + .006); g.gain.exponentialRampToValueAtTime(.0001, t + .1); o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + .12); }
+jump(i) { const go = () => { if (!this.post) return; const el = this.post.querySelector('[data-sec="' + i + '"]'); if (el) this.post.scrollTo({ top: Math.max(0, el.offsetTop - 30), behavior: i < 0 ? 'auto' : 'smooth' }); }; setTimeout(go, 40); }
+renderVals() {
+const s = this.state, P = this.P[s.k], open = s.hover || s.locked;
+const pos = [[-420, -200], [400, -210], [-470, 110], [450, 120], [0, 300]];
+return {
+tabs: Object.keys(this.P).map(k => ({ t: this.P[k].t, sel: s.k === k, cls: s.k === k ? 'sel' : '', pick: () => this.setState({ k: k, locked: false, hover: false, reading: false }) })),
+parts: P.parts.map((p, i) => ({ label: p[0], text: p[1], tab: open ? '0' : '-1', tf: open ? 'translate(' + pos[i][0] + 'px,' + pos[i][1] + 'px) rotate(' + (i % 2 ? 1.5 : -1.5) + 'deg)' : 'translate(0,0) scale(.4)', lx: 720 + (open ? pos[i][0] : 0), ly: 470 + (open ? pos[i][1] : 0), go: () => { this.setState({ reading: true, sec: i }); this.jump(i); } })),
+partO: open ? 1 : 0, lineO: open ? 1 : 0, coreS: open ? .92 : 1, readS: open ? 1 : .6, open: open,
+isSite: s.k === 'site', isFood: s.k === 'food', isNext: s.k === 'next', coreAria: P.t + (open ? ', taken apart' : ', hover to take apart'),
+hint: s.locked ? 'held open · click the project to put it back together' : 'hover the project',
+enter: () => { if (!s.hover && !s.locked) this.pop(true); this.setState({ hover: true }); },
+leave: () => { if (s.hover && !s.locked) this.pop(false); this.setState({ hover: false }); },
+lock: () => this.setState({ locked: !s.locked }),
+readAll: () => { this.setState({ reading: true, sec: 0 }); setTimeout(() => { if (this.post) this.post.scrollTo({ top: 0 }); }, 40); },
+reading: s.reading, postRef: this.postRef,
+closePost: () => this.setState({ reading: false, locked: true }),
+toc: P.parts.map((p, i) => ({ n: String(i + 1).padStart(2, '0') + ' · ' + p[0], label: p[2], cls: s.sec === i ? 'on' : '', cur: s.sec === i ? 'true' : 'false', go: () => { this.setState({ sec: i }); this.jump(i); } })),
+post: { kicker: P.kicker, title: P.t, dek: P.dek, hasHero: !!P.hero, hero: P.hero, heroAlt: P.heroAlt, heroCap: P.heroCap,
+secs: P.parts.map((p, i) => ({ i: i, n: String(i + 1).padStart(2, '0') + ' · ' + p[0], h: p[2], paras: p[3].map(t => ({ t: t })), hasQuote: !!p[4], quote: p[4] })) },
+pscroll: e => { const el = e.currentTarget; const secs = el.querySelectorAll('[data-sec]'); let cur = 0; secs.forEach((x, i) => { if (x.offsetTop - el.scrollTop < 360) cur = i; }); if (cur !== this.state.sec) this.setState({ sec: cur }); }
+};
+}
+}
+</script>
+</body>
+</html>

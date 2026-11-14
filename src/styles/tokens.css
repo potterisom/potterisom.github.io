@@ -1,0 +1,70 @@
+/* Design tokens — handoff/SPEC.md §4. One place for type, colour and motion. */
+:root {
+  /* type */
+  --serif: 'Instrument Serif', 'EB Garamond', Georgia, serif; /* display */
+  --read: 'EB Garamond', Georgia, serif; /* long reading; has Cyrillic */
+  --ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --hand: 'Nothing You Could Do', 'Bradley Hand', cursive; /* sparingly */
+
+  /* colour */
+  --ink: #1d1b1a;
+  --paper: #fffdf9;
+  --paper-2: #fbf6ee;
+  --red: #c8323c;
+  --pink: #b4436f;
+  --purple: #7a4ba6;
+  --purple-deep: #5b3a86;
+  --night: #141a36;
+
+  /* motion */
+  --spring: cubic-bezier(0.2, 1.3, 0.3, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--ui);
+  color: var(--ink);
+  background: var(--paper-2);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+p,
+figure,
+blockquote {
+  margin: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

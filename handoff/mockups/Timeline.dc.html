@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Timeline — Leyla Salken</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.scroller{overflow-y:auto;scrollbar-width:none}
+.stack{display:grid}
+.ch{grid-area:1/1;display:flex;flex-direction:column;gap:18px}
+.ch > *{transition:opacity .55s ease, filter .55s ease, transform .6s cubic-bezier(.2,1,.3,1)}
+.ch > :nth-child(2){transition-delay:.06s}
+.ch > :nth-child(3){transition-delay:.12s}
+.ch > :nth-child(4){transition-delay:.18s}
+.ch > .det{opacity:.85}
+.ch.off > *,.ch.off > .det{opacity:0;filter:blur(10px);transform:translateY(16px)}
+.ch.off{pointer-events:none}
+.tick{display:flex;align-items:center;gap:12px;font:500 13px 'Inter',sans-serif;transition:opacity .4s}
+.tick i{display:block;height:2px;background:currentColor;transition:width .4s cubic-bezier(.2,1.3,.3,1)}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; position: relative; overflow: hidden; font-family: 'Inter', sans-serif">
+<div class="scroller" onScroll="{{scroll}}" style="position: absolute; inset: 0">
+<div style="position: sticky; top: 0; height: 900px; overflow: hidden; background: linear-gradient({{top}}, {{bot}}); color: {{ink}}; transition: color .6s">
+
+<div style="position: absolute; left: 120px; top: 48px; right: 120px; display: flex; justify-content: space-between; align-items: baseline">
+<a href="FinalHome.dc.html" style="font-family: 'Instrument Serif', serif; font-size: 32px; color: inherit; text-decoration: none">Leyla Salken</a>
+<span style="font-size: 13px; opacity: .8">timeline · scroll</span>
+</div>
+
+<div class="stack" style="position: absolute; left: 120px; top: 220px; width: 860px">
+<sc-for list="{{chapters}}" as="c" hint-placeholder-count="8">
+<div class="ch {{c.cls}}" aria-hidden="{{c.hid}}">
+<span style="font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: {{accent}}">{{c.when}}</span>
+<span style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 128px; line-height: .9; letter-spacing: -0.01em">{{c.where}}</span>
+<span style="font-family: 'Instrument Serif', serif; font-size: 50px; line-height: 1.1">{{c.doing}}</span>
+<span class="det" style="max-width: 560px; margin-top: 12px; font-size: 17px; line-height: 1.6">{{c.detail}}</span>
+</div>
+</sc-for>
+</div>
+
+<nav aria-label="Chapters" style="position: absolute; right: 120px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 14px; align-items: flex-end">
+<sc-for list="{{ticks}}" as="t" hint-placeholder-count="8">
+<span class="tick" style="opacity: {{t.o}}"><span>{{t.when}}</span><i style="width: {{t.w}}"></i></span>
+</sc-for>
+</nav>
+<a href="#" style="position: absolute; left: 120px; bottom: 48px; font-size: 14px; color: inherit">cv (pdf) ↗</a>
+</div>
+<div style="height: 4200px"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+constructor(p) {
+super(p);
+this.E = [
+['before', '[where you grew up]', '[growing up]', '[a sentence or two in your own words]'],
+['2023 – 24', 'Williamstown', 'first year at Williams.', 'Freshman winter study, January 2024: skiing, snow, a diary in Russian.'],
+['summer 2024', 'New York', 'my first corporate job.', '“i finally had a big-girl corporate job in new york city.” It got lonely.'],
+['august 2024', 'Williamstown', 'an orientation leader.', '“my freshmen think i got it figured out but the truth is i am just as lost as they are.”'],
+['summer 2025', 'Dartmouth', 'researching causality.', 'With Prof. Bijan Mazaheri — and two roommates, from the (only) top bunk.'],
+['2025 – 26', 'Oxford', 'a year at Exeter College.', 'Studying abroad.'],
+['summer 2026', 'Jane Street', 'strategy & product.', 'An internship.'],
+['now', 'Williamstown', 'building things.', 'Math with some computer science. Free Food at Williams — and this website.']
+];
+this.state = { p: 0 };
+}
+hex(c) { return c.startsWith('#') ? c : '#' + c.match(/\d+/g).map(v => (+v).toString(16).padStart(2, '0')).join(''); }
+mix(a, b, t) { a = this.hex(a); b = this.hex(b); const q = x => [1, 3, 5].map(i => parseInt(x.slice(i, i + 2), 16)); const A = q(a), B = q(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',') + ')'; }
+key(h, K, i) { for (let j = 0; j < K.length - 1; j++) if (h >= K[j][0] && h <= K[j + 1][0]) return this.mix(K[j][i], K[j + 1][i], (h - K[j][0]) / (K[j + 1][0] - K[j][0])); return K[K.length - 1][i]; }
+renderVals() {
+const p = this.state.p, n = this.E.length;
+const i = Math.min(n - 1, Math.floor(p * n * 0.999));
+const h = 6 + p * 16;
+const K = [[6, '#4A5C9E', '#F2A88A'], [7.6, '#7FA8DD', '#F7DCC2'], [12, '#69A1DE', '#D6E8F6'], [16, '#7B9FD5', '#F3D5B6'], [17.4, '#465092', '#F28A60'], [18.6, '#232859', '#6A4977'], [20, '#0D1230', '#1F2649'], [22, '#070B1E', '#141A36']];
+const day = Math.max(0, Math.min(1, Math.sin(Math.PI * (h - 6) / 12.4)));
+const dark = day <= .4;
+return {
+top: this.key(h, K, 1), bot: this.key(h, K, 2), ink: dark ? '#F4EEF8' : '#1D1B1A', accent: dark ? '#F2A3B8' : '#C8323C',
+chapters: this.E.map((e, j) => ({ when: e[0], where: e[1], doing: e[2], detail: e[3], cls: j === i ? '' : 'off', hid: j !== i })),
+ticks: this.E.map((e, j) => ({ when: e[0], o: j === i ? 1 : .45, w: j === i ? '48px' : '16px' })),
+scroll: ev => { const el = ev.currentTarget; this.setState({ p: Math.min(1, el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight)) }); }
+};
+}
+}
+</script>
+</body>
+</html>
