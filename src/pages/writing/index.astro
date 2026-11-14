@@ -65,6 +65,7 @@ const tiles = buildWall(pieces);
 </Base>
 
 <script>
+  import { absolutize, canPush } from '../../scripts/overlay';
   import { initWall } from '../../scripts/wall';
   import { initReader } from '../../scripts/reader';
 
@@ -86,6 +87,7 @@ const tiles = buildWall(pieces);
       const res = await fetch(href);
       if (!res.ok) throw new Error(String(res.status));
       const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+      absolutize(doc, res.url);
       const found = doc.querySelector<HTMLElement>('[data-reader]');
       if (!found) throw new Error('no reader');
       const reader = document.importNode(found, true);
@@ -99,7 +101,7 @@ const tiles = buildWall(pieces);
       wall.pause();
       room.inert = true;
       stopReader = initReader(reader);
-      if (push) history.pushState({ reader: true }, '', href);
+      if (push && canPush) history.pushState({ reader: true }, '', href);
       document.title = doc.title;
       reader.focus({ preventScroll: true });
     } catch {
@@ -119,7 +121,7 @@ const tiles = buildWall(pieces);
   function close() {
     if (history.state?.reader) history.back(); // popstate does the teardown
     else {
-      history.replaceState(null, '', wallPath);
+      if (canPush) history.replaceState(null, '', wallPath);
       teardown();
     }
     returnTo?.focus({ preventScroll: true });

@@ -1,0 +1,51 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import type { Project } from '../lib/projects';
+
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+const d = project.entry.data;
+const { Content } = await render(project.entry);
+---
+
+<div class="post" data-post data-title={project.title} tabindex="-1">
+  <div class="post-cols">
+    <nav class="post-toc" aria-label="Sections">
+      <a class="post-back" href={`/projects/#${project.slug}`} data-post-close>← back to the parts</a>
+      <ol>
+        {
+          project.parts.map((p) => (
+            <li>
+              <a class="toc" href={`#${p.id}`} data-toc={p.id}>
+                <span class="n">
+                  {p.n} · {p.label}
+                </span>
+                <span class="t">{p.heading}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+    <article>
+      <p class="post-kicker">{d.kicker}</p>
+      <h1>{project.title}</h1>
+      <p class="post-dek">{d.dek}</p>
+      {
+        d.hero && (
+          <figure>
+            <Image src={d.hero} alt={d.heroAlt} widths={[680, 1360]} sizes="(max-width: 900px) 100vw, 680px" />
+            {d.heroCap && <figcaption>{d.heroCap}</figcaption>}
+          </figure>
+        )
+      }
+      <div class="post-body">
+        <Content />
+      </div>
+      <p class="post-heart" aria-hidden="true">♥</p>
+    </article>
+  </div>
+</div>

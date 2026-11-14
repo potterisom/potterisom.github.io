@@ -26,4 +26,40 @@ const writing = defineCollection({
   }),
 });
 
-export const collections = { writing };
+/**
+ * Projects: one Markdown file per project in src/content/projects/.
+ * The body is the long post: five "## " sections, one per part, in this order:
+ * the problem · for whom · the key decision · built with · what's next.
+ * A "> quote" inside a section becomes its red pull quote.
+ */
+const projects = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/projects' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      /** Position among the tabs (1 = first). */
+      order: z.number().default(99),
+      /** Show this project when the page opens. */
+      open_first: z.boolean().default(false),
+      status: z.string().optional(),
+      kicker: z.string(),
+      dek: z.string(),
+      /** The project card: a photo, or just a colour. */
+      cover: image().optional(),
+      color: z.string().default('#2E3266'),
+      /** Picture at the top of the post. */
+      hero: image().optional(),
+      heroAlt: z.string().default(''),
+      heroCap: z.string().optional(),
+      /** One short line per part, shown on the cards of the exploded view. */
+      parts: z.object({
+        problem: z.string(),
+        for_whom: z.string(),
+        key_decision: z.string(),
+        built_with: z.string(),
+        whats_next: z.string(),
+      }),
+    }),
+});
+
+export const collections = { writing, projects };

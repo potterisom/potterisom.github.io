@@ -1,0 +1,35 @@
+---
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/eb-garamond/latin-400.css';
+import '@fontsource/eb-garamond/latin-400-italic.css';
+import '../../styles/post.css';
+import Base from '../../layouts/Base.astro';
+import Post from '../../components/Post.astro';
+import { getProjects, type Project } from '../../lib/projects';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project) => ({ params: { slug: project.slug }, props: { project } }));
+}
+
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+---
+
+<Base title={project.title} description={`${project.title}: a project by Leyla Salken.`}>
+  <main>
+    <Post project={project} />
+  </main>
+</Base>
+
+<script>
+  import { initPost } from '../../scripts/post';
+
+  const el = document.querySelector<HTMLElement>('[data-post]');
+  if (el) {
+    initPost(el);
+    el.focus({ preventScroll: true });
+  }
+</script>

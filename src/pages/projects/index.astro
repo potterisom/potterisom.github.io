@@ -1,0 +1,606 @@
+---
+import { Image } from 'astro:assets';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/eb-garamond/latin-400.css';
+import '@fontsource/eb-garamond/latin-400-italic.css';
+import '../../styles/post.css';
+import Base from '../../layouts/Base.astro';
+import SoundToggle from '../../components/SoundToggle.astro';
+import { getProjects } from '../../lib/projects';
+
+const projects = await getProjects();
+const first = projects.find((p) => p.entry.data.open_first) ?? projects[0];
+// where each part lands, px from the project's centre (also in scripts/explode.ts)
+const POS = [
+  [-420, -200],
+  [400, -210],
+  [-470, 110],
+  [450, 120],
+  [0, 300],
+];
+---
+
+<Base title="Projects" description="Things Leyla Salken has built, taken apart.">
+  <main class="stage" data-stage>
+    <header class="mark">
+      <a href="/">Leyla Salken</a>
+      <p>
+        projects · <span class="fine">hover</span><span class="coarse">tap</span> to take one apart, <span class="fine"
+          >click</span
+        ><span class="coarse">tap</span> a part to read about it
+      </p>
+    </header>
+
+    <div class="tabs" role="group" aria-label="Project">
+      {
+        projects.map((p) => (
+          <button
+            type="button"
+            class:list={['tab', { sel: p === first }]}
+            data-tab={p.slug}
+            aria-pressed={p === first ? 'true' : 'false'}
+          >
+            {p.title}
+          </button>
+        ))
+      }
+    </div>
+
+    {
+      projects.map((p) => {
+        const d = p.entry.data;
+        return (
+          <section class="rig" data-rig={p.slug} hidden={p !== first} aria-label={p.title}>
+            <svg class="lines" aria-hidden="true">
+              {p.parts.map(() => (
+                <line stroke="#C9BBA8" stroke-width="1.5" stroke-dasharray="4 6" />
+              ))}
+            </svg>
+
+            <button type="button" class="core" data-core aria-expanded="false" style={`background:${d.color}`}>
+              {d.cover && <Image src={d.cover} alt="" widths={[300, 600, 900]} sizes="300px" />}
+              <span class="core-title">{p.title}</span>
+              <span class="sr-only">: take it apart</span>
+            </button>
+
+            <div class="parts">
+              {p.parts.map((part, i) => (
+                <a
+                  class="part"
+                  href={part.href}
+                  data-part
+                  tabindex="-1"
+                  style={`--x:${POS[i][0]};--y:${POS[i][1]};--r:${i % 2 ? 1.5 : -1.5}deg;--i:${i}`}
+                >
+                  <span class="part-label">{part.label}</span>
+                  <span class="part-text">{part.text}</span>
+                  <span class="part-more">read this part →</span>
+                </a>
+              ))}
+            </div>
+
+            <a class="read" href={p.href} data-read tabindex="-1">
+              read the whole story →
+            </a>
+          </section>
+        );
+      })
+    }
+
+    <p class="hint" data-hint aria-live="polite">hover the project</p>
+  </main>
+  <div data-post-host></div>
+  <SoundToggle />
+</Base>
+
+<script>
+  import { absolutize, canPush } from '../../scripts/overlay';
+  import { initExplode } from '../../scripts/explode';
+  import { initPost } from '../../scripts/post';
+
+  const stage = document.querySelector<HTMLElement>('[data-stage]')!;
+  const host = document.querySelector<HTMLElement>('[data-post-host]')!;
+  const pageTitle = document.title;
+  const pagePath = location.pathname;
+
+  stage.classList.add('is-live');
+  const view = initExplode(stage);
+  let stopPost: (() => void) | null = null;
+
+  /** Open a post over the exploded view. Its markup comes from the post's own page. */
+  async function open(href: string, push: boolean) {
+    const url = new URL(href, location.href);
+    try {
+      const res = await fetch(url.pathname);
+      if (!res.ok) throw new Error(String(res.status));
+      const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+      absolutize(doc, res.url);
+      const found = doc.querySelector<HTMLElement>('[data-post]');
+      if (!found) throw new Error('no post');
+      const post = document.importNode(found, true);
+      stopPost?.();
+      post.classList.add('is-opening');
+      post.setAttribute('role', 'dialog');
+      post.setAttribute('aria-modal', 'true');
+      post.setAttribute('aria-label', post.dataset.title ?? '');
+      host.replaceChildren(post);
+      stage.inert = true;
+      if (push && canPush) history.pushState({ post: true }, '', url.pathname + url.hash);
+      document.title = doc.title;
+      stopPost = initPost(post, url.hash);
+      post.focus({ preventScroll: true });
+    } catch {
+      location.href = href;
+    }
+  }
+
+  function teardown() {
+    stopPost?.();
+    stopPost = null;
+    host.replaceChildren();
+    stage.inert = false;
+    document.title = pageTitle;
+    view.holdOpen(view.current()); // back to the parts, held open
+  }
+
+  function close() {
+    if (history.state?.post) history.back();
+    else {
+      if (canPush) history.replaceState(null, '', pagePath);
+      teardown();
+    }
+  }
+
+  stage.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-part], a[data-read]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    open(a.href, true);
+  });
+  host.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('[data-post-close]')) {
+      e.preventDefault();
+      close();
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && host.firstChild) close();
+  });
+  window.addEventListener('popstate', () => {
+    if (location.pathname === pagePath) {
+      if (host.firstChild) teardown();
+    } else open(location.href, false);
+  });
+</script>
+
+<style>
+  .stage {
+    position: relative;
+    z-index: 0;
+    height: 100vh;
+    height: 100svh;
+    min-height: 660px;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 50%, #fbf6ee, #e9e1d4 80%);
+    --fx: 1;
+    --fy: 1;
+    --cy: 52.2%;
+  }
+
+  .mark {
+    position: absolute;
+    left: 56px;
+    top: 40px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mark a {
+    align-self: flex-start;
+    font-family: var(--serif);
+    font-size: 34px;
+    line-height: 1;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .mark p {
+    font-size: 14px;
+    color: #5a5550;
+  }
+
+  .coarse {
+    display: none;
+  }
+
+  @media (hover: none) {
+    .fine {
+      display: none;
+    }
+    .coarse {
+      display: inline;
+    }
+  }
+
+  .tabs {
+    position: absolute;
+    right: 56px;
+    top: 46px;
+    z-index: 5;
+    display: flex;
+    gap: 8px;
+  }
+
+  .tab {
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid var(--ink);
+    background: none;
+    font: 500 14px var(--ui);
+    color: var(--ink);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .tab.sel {
+    background: var(--ink);
+    color: #fff8ee;
+  }
+
+  .mark a:focus-visible,
+  .tab:focus-visible,
+  .read:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  .rig {
+    position: absolute;
+    inset: 0;
+  }
+
+  .rig[hidden] {
+    display: none;
+  }
+
+  .lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .lines line {
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  .core {
+    position: absolute;
+    left: 50%;
+    top: var(--cy);
+    z-index: 2;
+    width: 300px;
+    height: 220px;
+    margin: -110px 0 0 -150px;
+    border-radius: 20px;
+    border: 0;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 30px 60px rgba(20, 20, 50, 0.25);
+    transition: transform 0.5s cubic-bezier(0.2, 1.4, 0.3, 1);
+  }
+
+  .core :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .core-title {
+    position: absolute;
+    left: 18px;
+    right: 60px;
+    bottom: 16px;
+    font-family: var(--serif);
+    font-size: 38px;
+    line-height: 0.92;
+    color: #fff;
+    text-align: left;
+    text-wrap: balance;
+  }
+
+  .core:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 6px;
+  }
+
+  .parts {
+    display: contents;
+  }
+
+  .part {
+    position: absolute;
+    left: 50%;
+    top: var(--cy);
+    z-index: 1;
+    width: 250px;
+    margin: -60px 0 0 -125px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: var(--paper);
+    box-shadow: 0 18px 40px rgba(20, 20, 50, 0.16);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--ink);
+    text-decoration: none;
+    transform: translate(0, 0) scale(0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform 0.7s cubic-bezier(0.2, 1.35, 0.3, 1),
+      opacity 0.4s,
+      box-shadow 0.2s;
+  }
+
+  .part:hover {
+    box-shadow: 0 22px 46px rgba(20, 20, 50, 0.24);
+  }
+
+  .part:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 4px;
+  }
+
+  .part-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .part-text {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .part-more {
+    font-size: 12px;
+    color: #736d66;
+  }
+
+  .read {
+    position: absolute;
+    left: 50%;
+    top: calc(var(--cy) + 130px);
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: var(--red);
+    color: #fff;
+    font: 500 15px var(--ui);
+    text-decoration: none;
+    white-space: nowrap;
+    transform: translateX(-50%) scale(0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.4s,
+      transform 0.5s cubic-bezier(0.2, 1.4, 0.3, 1);
+  }
+
+  .hint {
+    position: absolute;
+    left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%);
+    font-size: 13px;
+    color: #6b655e;
+    white-space: nowrap;
+  }
+
+  /* --- taken apart (and the no-JavaScript default, which is simply open) --- */
+  .rig.is-open .core,
+  .stage:not(.is-live) .core {
+    transform: scale(0.92);
+  }
+
+  .rig.is-open .lines line {
+    opacity: 1;
+  }
+
+  .rig.is-open .part,
+  .stage:not(.is-live) .part {
+    transform: translate(calc(var(--x) * var(--fx) * 1px), calc(var(--y) * var(--fy) * 1px)) rotate(var(--r));
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .rig.is-open .read,
+  .stage:not(.is-live) .read {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* --- phones: the parts drop out below the project in a stack --- */
+  @media (max-width: 760px) {
+    .stage {
+      height: auto;
+      min-height: 100svh;
+      overflow: visible;
+      display: flex;
+      flex-direction: column;
+      padding: calc(22px + env(safe-area-inset-top)) 22px 90px;
+      background: linear-gradient(#fbf6ee, #e9e1d4);
+    }
+
+    .mark,
+    .tabs,
+    .core,
+    .part,
+    .read,
+    .hint {
+      position: static;
+      margin: 0;
+    }
+
+    .mark a {
+      font-size: 30px;
+    }
+
+    .mark p {
+      font-size: 13px;
+    }
+
+    .tabs {
+      margin: 20px -22px 0;
+      padding: 0 22px 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .tab {
+      height: 38px;
+      flex: none;
+    }
+
+    .rig {
+      position: static;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 26px;
+    }
+
+    .lines {
+      display: none;
+    }
+
+    .core {
+      width: 100%;
+      max-width: 346px;
+      height: 230px;
+    }
+
+    .parts {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      height: 0;
+      margin-top: 0;
+      transition: margin-top 0.3s;
+    }
+
+    /* the leader line: one dashed thread down the middle */
+    .parts::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      bottom: 10px;
+      left: 50%;
+      border-left: 1.5px dashed #c9bba8;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    /* closed: tucked behind the project, taking up no room */
+    .part {
+      position: absolute;
+      top: 0;
+      left: auto;
+      width: min(100%, 300px);
+      transform: translateY(-150px) scale(0.4);
+    }
+
+    .rig.is-open .part,
+    .stage:not(.is-live) .part {
+      position: relative;
+      transition-delay: calc(var(--i) * 45ms);
+    }
+
+    .rig.is-open .parts,
+    .stage:not(.is-live) .parts {
+      height: auto;
+      margin-top: 30px;
+    }
+
+    .rig.is-open .parts::before {
+      opacity: 1;
+    }
+
+    .rig.is-open .part,
+    .stage:not(.is-live) .part {
+      transform: translateX(calc(var(--i) * 0px + var(--dx))) rotate(var(--r));
+    }
+
+    .part:nth-child(odd) {
+      --dx: 9px;
+    }
+
+    .part:nth-child(even) {
+      --dx: -9px;
+    }
+
+    .read {
+      display: none;
+      transform: scale(0.6);
+      margin-top: 26px;
+    }
+
+    .rig.is-open .read,
+    .stage:not(.is-live) .read {
+      display: inline-flex;
+      transform: none;
+    }
+
+    .hint {
+      transform: none;
+      margin-top: 22px;
+      text-align: center;
+      white-space: normal;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .core,
+    .part,
+    .read,
+    .parts {
+      transition: opacity 0.2s;
+    }
+  }
+</style>
+
+<style is:global>
+  @keyframes post-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+
+  .post.is-opening {
+    animation: post-in 0.45s cubic-bezier(0.2, 1, 0.3, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post.is-opening {
+      animation: none;
+    }
+  }
+</style>
