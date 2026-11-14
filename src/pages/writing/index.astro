@@ -25,9 +25,9 @@ const tiles = buildWall(pieces);
       {
         tiles.map((t) => {
           const p = t.piece;
-          const base = { href: p.href, 'data-tile': '', draggable: 'false' };
+          const base = { href: p.href, 'data-tile': '', draggable: 'false' as const };
           if (t.type === 'title') {
-            const hidden = t.focusable ? {} : { tabindex: '-1', 'aria-hidden': 'true' };
+            const hidden = t.focusable ? {} : { tabindex: '-1', 'aria-hidden': 'true' as const };
             return (
               <a {...base} {...hidden} class:list={['tile', 'title', p.kind]}>
                 <span class="label">{p.kind}</span>
