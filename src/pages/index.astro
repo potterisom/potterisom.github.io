@@ -1,0 +1,175 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import mosque from '../assets/pics/mosque-2x.jpg';
+
+const links = [
+  { href: '/writing', label: 'writing' },
+  { href: '/projects', label: 'projects' },
+  { href: '/creative', label: 'creative' },
+  { href: '/timeline', label: 'timeline' },
+  { href: 'mailto:leylasalken@gmail.com', label: 'email' },
+];
+---
+
+<Base themeColor="#1b2340">
+  <main class="scene" id="scene">
+    <Picture
+      src={mosque}
+      formats={['avif', 'webp']}
+      widths={[768, 1280, 1920, 2560]}
+      sizes="(max-aspect-ratio: 3/2) 150vh, 100vw"
+      alt="Minarets and a crescent moon in blue dusk light"
+      loading="eager"
+      fetchpriority="high"
+      class="photo"
+    />
+    <div class="shade" aria-hidden="true"></div>
+
+    <div class="who" data-behind-glass>
+      <h1>Leyla Salken</h1>
+      <p>
+        I study mathematics, sprinkled with some computer science, at Williams. Oxford last year;
+        Jane Street this summer.
+      </p>
+      <nav aria-label="Main">
+        {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      </nav>
+    </div>
+
+    <canvas id="fog" aria-hidden="true"></canvas>
+    <span class="hint" aria-hidden="true">it’s cold outside — wipe the glass</span>
+  </main>
+</Base>
+
+<script>
+  import { initFog } from '../components/home/fog';
+  const canvas = document.getElementById('fog') as HTMLCanvasElement;
+  const scene = document.getElementById('scene') as HTMLElement;
+  initFog(canvas, scene);
+</script>
+
+<style>
+  .scene {
+    position: relative;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 480px;
+    overflow: hidden;
+    background: #1b2340;
+    color: #fff;
+    cursor: crosshair;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .scene :global(picture),
+  .scene :global(.photo) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .scene :global(.photo) {
+    object-fit: cover;
+    object-position: 46% 50%;
+    animation: slow 40s ease-in-out infinite alternate;
+  }
+  @keyframes slow {
+    from {
+      transform: scale(1.04);
+    }
+    to {
+      transform: scale(1.12) translate(-1%, -1%);
+    }
+  }
+
+  .shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10, 14, 40, 0) 45%, rgba(10, 14, 40, 0.55));
+  }
+
+  .who {
+    position: absolute;
+    left: clamp(24px, 5vw, 72px);
+    right: clamp(24px, 5vw, 72px);
+    bottom: max(clamp(32px, 5vw, 72px), env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 720px;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(64px, 9.17vw, 132px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.25);
+  }
+  p {
+    margin: 0;
+    max-width: 560px;
+    font-size: clamp(17px, 1.32vw, 19px);
+    line-height: 1.5;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin-top: 6px;
+  }
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    font: 500 16px var(--ui);
+    /* 44px tall tap target without moving the underline */
+    padding: 12px 0 3px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    transition: border-color 0.2s;
+  }
+  nav a:hover {
+    border-bottom-color: #fff;
+  }
+  nav a:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 4px;
+  }
+
+  #fog {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.93));
+    mask-image: linear-gradient(rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.93));
+  }
+
+  .hint {
+    position: absolute;
+    right: clamp(16px, 2.8vw, 40px);
+    top: max(clamp(16px, 2.4vw, 34px), env(safe-area-inset-top));
+    font-size: 13px;
+    color: #2b3550;
+    background: rgba(255, 255, 255, 0.55);
+    padding: 6px 12px;
+    border-radius: 999px;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scene :global(.photo) {
+      animation: none;
+    }
+    #fog {
+      opacity: 0.3;
+    }
+  }
+</style>

@@ -1,0 +1,36 @@
+---
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '../styles/tokens.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  themeColor?: string;
+}
+const {
+  title,
+  description = 'Leyla Salken studies mathematics at Williams. Writing, projects, photographs and music.',
+  themeColor = '#fffdf9',
+} = Astro.props;
+const fullTitle = title ? `${title} · Leyla Salken` : 'Leyla Salken';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={themeColor} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
