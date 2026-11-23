@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+const posts = (await getCollection('posts')).sort((a, b) => a.data.order - b.data.order).slice(0, 4);
+---
+<Base title="Leyla Salken">
+  <main class="home">
+    <img class="photo" src="/pics/mosque.webp" srcset="/pics/mosque-1600.webp 1600w, /pics/mosque.webp 2560w" sizes="100vw" alt="Minarets and a crescent moon in blue dusk light" />
+    <canvas class="fog" aria-hidden="true"></canvas>
+    <div class="halo" aria-hidden="true"></div>
+    <div class="center">
+      <h1><img src="/hand/name.png" alt="Leyla Salken" width="530" height="144" /></h1>
+      <p class="intro">i like math, asking questions, and making beautiful things</p>
+      <nav aria-label="Recent posts">
+        {posts.map((p, i) => <a class="post" href={`/${p.id}/`} data-note={i}>{p.data.title}</a>)}
+      </nav>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .home{position:relative;height:100vh;height:100svh;min-height:560px;overflow:hidden;background:#1B2340}
+  .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:slow 40s ease-in-out infinite alternate}
+  @keyframes slow{from{transform:scale(1.04)}to{transform:scale(1.12) translate(-1%,-1%)}}
+  .fog{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .halo{position:absolute;left:50%;top:50%;width:min(1000px,140vw);height:min(820px,120vh);border-radius:50%;pointer-events:none;
+    background:radial-gradient(ellipse at center,rgba(240,243,248,.96) 0%,rgba(236,240,247,.9) 35%,rgba(230,235,244,.55) 52%,rgba(230,235,244,0) 70%);
+    transform:translate(-50%,-50%);animation:breathe 7s ease-in-out infinite alternate}
+  @keyframes breathe{from{transform:translate(-50%,-50%) scale(.97)}to{transform:translate(-50%,-50%) scale(1.04)}}
+  .center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(620px,90vw);display:flex;flex-direction:column;align-items:center;text-align:center}
+  h1{margin:0;line-height:0}
+  h1 img{width:min(530px,82vw);height:auto;display:block}
+  .intro{margin:14px 0 26px;font-size:22px;color:#22283f}
+  nav{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .post{display:inline-flex;align-items:center;min-height:44px;padding:6px 4px;font-size:21px;color:var(--soft);text-decoration:none}
+  @media (max-width:600px){ .intro{font-size:19px} .post{font-size:19px} }
+  @media (prefers-reduced-motion: reduce){ .photo,.halo{animation:none} }
+</style>
+
+<script>
+  import { startFog } from '../scripts/fog';
+  import { wireSound, homeNote } from '../scripts/sound';
+  startFog(document.querySelector('.fog') as HTMLCanvasElement);
+  wireSound(homeNote);
+</script>

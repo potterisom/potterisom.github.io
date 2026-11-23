@@ -1,0 +1,88 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import 'katex/dist/katex.min.css';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('posts')).sort((a, b) => a.data.order - b.data.order);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post, posts } }));
+}
+const { post, posts } = Astro.props;
+const { Content } = await render(post);
+const d = post.data.date;
+const dateText = d ? d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : null;
+---
+<Base title={post.data.title}>
+  <div class="page">
+    <aside>
+      <nav aria-label="All posts">
+        <a class="home" href="/"><img src="/hand/name.png" alt="Leyla Salken, home" width="220" height="60" /></a>
+        {posts.map((p, i) => (
+          <a class:list={['sb', 'imp', { on: p.id === post.id }]} href={`/${p.id}/`} data-note={i}
+             aria-current={p.id === post.id ? 'page' : undefined}>{p.data.title}</a>
+        ))}
+      </nav>
+    </aside>
+    <main>
+      <article>
+        <h1>{post.data.hand ? <img src={post.data.hand} alt={post.data.title} /> : post.data.title}</h1>
+        <Content />
+        {dateText && <p class="dt">{dateText}</p>}
+        {post.data.pdf && <p><a class="ln" href={post.data.pdf}>pdf ↗</a></p>}
+      </article>
+    </main>
+  </div>
+</Base>
+
+<style>
+  .page{display:flex;min-height:100vh}
+  aside{position:sticky;top:0;height:100vh;width:380px;flex:none;overflow:auto;
+    background:linear-gradient(rgba(226,232,242,.82),rgba(226,232,242,.82)),url(/pics/mosque-small.webp) center/cover}
+  aside nav{padding:44px 40px;display:flex;flex-direction:column;gap:4px}
+  .home{display:block;line-height:0;margin-bottom:28px;align-self:flex-start}
+  .home img{width:220px;height:auto}
+  .sb{display:block;padding:10px 14px;margin:0 -14px;border-radius:12px;font-size:18.5px;line-height:1.35;color:var(--soft);text-decoration:none;transition:transform .4s cubic-bezier(.2,1.5,.3,1)}
+  .sb:hover,.sb:focus-visible{transform:translateX(4px)}
+  .sb.on{box-shadow:inset 0 0 0 1px rgba(18,24,49,.28)}
+  main{flex:1;min-width:0;padding:90px 24px}
+  article{max-width:640px;margin:0 auto;font-size:23.5px;line-height:1.65;color:var(--ink)}
+  h1{margin:0 0 36px;line-height:0}
+  h1 img{width:min(612px,100%);height:auto}
+
+  article :global(p){margin:0 0 .9em}
+  article :global(h2){font-weight:700;font-size:26px;line-height:1.3;margin:1.4em 0 .5em;color:var(--navy)}
+  article :global(.ab){font-size:20px;line-height:1.55;margin:0 0 1.6em;padding:0 28px}
+  article :global(.sc){font-variant:small-caps;font-weight:700}
+  article :global(.katex-display){overflow-x:auto;overflow-y:hidden;margin:.5em 0 1em;padding:.1em 0}
+  article :global(.katex){font-size:1.02em}
+  article :global(ol),article :global(ul){margin:.2em 0 1em;padding-left:1.4em}
+  article :global(li){margin:0 0 .5em}
+  article :global(.qed){float:right;margin-left:1em}
+  article :global(.ln){color:var(--navy);text-decoration:underline;text-underline-offset:3px}
+  article :global(.dt){margin-top:2em;color:#5a5448;font-size:19px}
+  article :global(.footnotes){margin-top:2em;padding-top:.8em;border-top:1px solid rgba(20,18,16,.18);font-size:18px}
+  article :global(.footnotes h2){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  article :global(blockquote){margin:0 0 1.8em;padding:0}
+  article :global(blockquote p){margin:0 0 .3em}
+  article :global(cite){font-style:italic;font-size:19px;color:#5a5448}
+  article :global(.job h2){margin:1.2em 0 .1em;font-size:24px}
+  article :global(.rl){margin:0 0 .4em;font-style:italic;font-size:19px;color:#5a5448}
+  article :global(.job ul){font-size:19.5px;line-height:1.5}
+
+  @media (max-width:900px){
+    .page{flex-direction:column}
+    aside{position:relative;height:auto;width:100%}
+    aside nav{padding:28px 24px}
+    main{padding:48px 20px 80px}
+    article{font-size:19.5px}
+    article :global(.ab){padding:0;font-size:18px}
+    article :global(h2){font-size:22px}
+  }
+</style>
+
+<script>
+  import { wireSound, sidebarNote } from '../scripts/sound';
+  import { wirePaint } from '../scripts/paint';
+  wireSound(sidebarNote);
+  wirePaint();
+</script>

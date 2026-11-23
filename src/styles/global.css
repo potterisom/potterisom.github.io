@@ -1,0 +1,31 @@
+/* ---------- type ---------- */
+@font-face{font-family:'LM Roman 12';src:url(/fonts/lm12-regular.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'LM Roman 12';src:url(/fonts/lm12-italic.woff2) format('woff2');font-style:italic;font-display:swap}
+@font-face{font-family:'LM Roman 12';src:url(/fonts/lm12-bold.woff2) format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'LM Roman 17';src:url(/fonts/lm17-regular.woff2) format('woff2');font-display:swap}
+:root{--ink:#141210;--navy:#121831;--soft:#454d72;--paper:#FBF6EE;--serif:'LM Roman 12','Latin Modern Roman','CMU Serif',serif}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:var(--serif);color:var(--ink);background:var(--paper)}
+a{color:var(--navy)}
+:focus-visible{outline:2px solid var(--navy);outline-offset:3px;border-radius:6px}
+img{max-width:100%}
+
+/* ---------- sound toggle ---------- */
+.snd{position:fixed;right:20px;bottom:20px;z-index:50;width:44px;height:44px;border:none;background:transparent;color:var(--navy);opacity:.7;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.snd:hover{opacity:1}
+.snd .off{display:none}.snd.muted .on{display:none}.snd.muted .off{display:block}
+
+/* ---------- paint spill on sidebar links ---------- */
+@property --r0{syntax:'<length>';inherits:false;initial-value:0px}
+@property --r1{syntax:'<length>';inherits:false;initial-value:0px}
+@property --r2{syntax:'<length>';inherits:false;initial-value:0px}
+@property --r3{syntax:'<length>';inherits:false;initial-value:0px}
+@property --r4{syntax:'<length>';inherits:false;initial-value:0px}
+@property --r5{syntax:'<length>';inherits:false;initial-value:0px}
+.imp{position:relative;isolation:isolate;overflow:hidden;--x:50%;--y:50%}
+.imp::before{content:"";position:absolute;inset:-30px;z-index:-1;opacity:0;background:radial-gradient(circle at var(--x) var(--y),#fffaf2 var(--r0),transparent calc(var(--r0) + 1px)),radial-gradient(circle at calc(var(--x) + var(--dx1,0px)) calc(var(--y) + var(--dy1,0px)),#fffaf2 var(--r1),transparent calc(var(--r1) + 1px)),radial-gradient(circle at calc(var(--x) + var(--dx2,0px)) calc(var(--y) + var(--dy2,0px)),#fffaf2 var(--r2),transparent calc(var(--r2) + 1px)),radial-gradient(circle at calc(var(--x) + var(--dx3,0px)) calc(var(--y) + var(--dy3,0px)),#fffaf2 var(--r3),transparent calc(var(--r3) + 1px)),radial-gradient(circle at calc(var(--x) + var(--dx4,0px)) calc(var(--y) + var(--dy4,0px)),#fffaf2 var(--r4),transparent calc(var(--r4) + 1px)),radial-gradient(circle at calc(var(--x) + var(--dx5,0px)) calc(var(--y) + var(--dy5,0px)),#fffaf2 var(--r5),transparent calc(var(--r5) + 1px));filter:url(#goo);transition:opacity .45s ease,--r0 0s linear .45s,--r1 0s linear .45s,--r2 0s linear .45s,--r3 0s linear .45s,--r4 0s linear .45s,--r5 0s linear .45s}
+.imp:hover::before,.imp:focus-visible::before{opacity:1;--r0:380px;--r1:70px;--r2:95px;--r3:60px;--r4:110px;--r5:80px;transition:opacity .15s ease,--r0 55s cubic-bezier(0,.85,.15,1) 0s,--r1 26s cubic-bezier(0,.85,.15,1) .25s,--r2 34s cubic-bezier(0,.85,.15,1) .55s,--r3 22s cubic-bezier(0,.85,.15,1) .9s,--r4 40s cubic-bezier(0,.85,.15,1) 1.2s,--r5 30s cubic-bezier(0,.85,.15,1) 1.7s}
+@media (prefers-reduced-motion: reduce){
+  .imp:hover::before,.imp:focus-visible::before{transition:opacity .15s ease}
+}
