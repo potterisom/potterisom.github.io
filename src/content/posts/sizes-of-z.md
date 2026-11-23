@@ -92,9 +92,7 @@ Sketch of the proof: take a compact set that contains the sequence, and keep zoo
 Let $I_k = [a_k, b_k]$. Let $m_k = \frac{a_k+b_k}{2}$ be the midpoint of the interval $I_k$. Then set the left and right-half intervals:
 
 $$
-\begin{aligned}
-&L_k = [a_k, m_k]&        R_k=[m_k,b_k],
-\end{aligned}
+L_k = [a_k, m_k] \hspace{7em} R_k=[m_k,b_k],
 $$
 
 so that $I_k = L_k \cup R_k$.
@@ -125,7 +123,7 @@ $$
 
 Therefore, $\{n : |L-c_n| <\e \} \in U$, and that completes proof of existence.
 
-Suppose $c_n \rightarrow L$ and $c_n \rightarrow L'$. Then $\{n:|L-c_n|<\frac{|L-L'|}{3}\} \in U$ and $\{n:|L'-c_n|<\frac{|L-L'|}{3}\} \in U$. By property 3, their intersection must also live in $U$, but their intersection is the empty set, which cannot be in $U$ by property 1. This is a contradiction, hence the limit is unique and that concludes our proof. <span class="qed">♡</span>
+Suppose $c_n \rightarrow L$ and $c_n \rightarrow L'$. Then $\{n:|L-c_n|<\frac{|L-L'|}{3}\} \in U$ and $\{n:|L'-c_n|<\frac{|L-L'|}{3}\} \in U$. By property 3, their intersection must also live in $U$, but their intersection is the empty set, which cannot be in $U$ by property 1. This is a contradiction, hence the limit is unique and that concludes our proof. <span class="qed">$\heartsuit$</span>
 
 <h2 class="sec">5. Wins</h2>
 

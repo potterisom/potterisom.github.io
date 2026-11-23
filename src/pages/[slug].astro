@@ -103,7 +103,7 @@ const dateText = d ? d.toLocaleDateString('en-US', { month: 'long', day: 'numeri
   .paper{text-align:justify;hyphens:auto;-webkit-hyphens:auto;line-height:1.38}
   .paper :global(p){margin:0 0 .75em}
   .ptitle{margin:0;text-align:center;font-weight:700;text-transform:uppercase;font-size:1em;line-height:1.4;color:var(--ink)}
-  .pauthor{margin:1.6em 0 2.6em;text-align:center;text-transform:uppercase;font-family:'LM Roman 10',var(--serif);font-size:.83em}
+  .paper .pauthor{margin:2.2em 0 3em;text-align:center;text-transform:uppercase;font-family:'LM Roman 10',var(--serif);font-size:.83em}
   .paper :global(.ab){margin:0 3em 2.2em;padding:0;font-family:'LM Roman 10',var(--serif);font-size:.83em;line-height:1.38}
   .paper :global(.ab p){margin:0}
   .paper :global(.sc){font-family:'LM Roman Caps 10',var(--serif);font-weight:400;font-variant:normal}
@@ -111,14 +111,23 @@ const dateText = d ? d.toLocaleDateString('en-US', { month: 'long', day: 'numeri
   .paper :global(.tl){color:#0000ff;text-decoration:none}
   .paper :global(.thm){margin:1em 0 1.2em}
   .paper :global(.thm p){margin:0}
-  .paper :global(.katex-display){margin:.6em 0}
-  .paper :global(ol){padding-left:2.4em}
-  .paper :global(li){margin:0 0 .25em;padding-left:.3em}
+  .paper :global(.katex-display){margin:.35em 0 .5em}
+  /* digits and upright symbols in CMR12 like LaTeX; KaTeX's fonts fill in the math symbols */
+  .paper :global(.katex){font-family:'LM Roman 12',KaTeX_Main,serif}
+  .paper :global(ol:not(.footnotes ol)){list-style:none;counter-reset:it;padding-left:2.4em;margin:.2em 0 .75em}
+  .paper :global(ol:not(.footnotes ol) > li){counter-increment:it;position:relative;margin:0 0 .1em}
+  .paper :global(ol:not(.footnotes ol) > li)::before{content:'(' counter(it) ')';position:absolute;right:100%;margin-right:.5em}
   .paper :global(.footnotes),.pfoot{font-family:'LM Roman 10',var(--serif);font-size:.83em;border-top:none;margin-top:2.4em;padding-top:0}
   .paper :global(.footnotes)::before,.pfoot::before{content:"";display:block;width:8em;border-top:1px solid var(--ink);margin-bottom:.5em}
   .paper :global(.footnotes) + .pfoot{margin-top:.4em}
   .paper :global(.footnotes) + .pfoot::before{display:none}
   .pfoot p{margin:0 0 .2em;text-align:left}
+  .paper :global(sup a[data-footnote-ref]){color:#0000ff;text-decoration:none}
+  .paper :global(.footnotes ol){list-style:none;padding:0;margin:0;counter-reset:fn}
+  .paper :global(.footnotes li){counter-increment:fn;margin:0 0 .2em;text-align:left}
+  .paper :global(.footnotes li p){margin:0}
+  .paper :global(.footnotes li p)::before{content:counter(fn);font-size:.7em;vertical-align:super;margin-right:.1em}
+  .paper :global(.footnotes [data-footnote-backref]){display:none}
   .paper .pdf{margin-top:2em}
   @media (max-width:900px){ .paper :global(.ab){margin:0 0 1.8em} }
 

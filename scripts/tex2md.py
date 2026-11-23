@@ -25,7 +25,7 @@ def conv(path):
         t=re.sub(r'\\href\{([^}]*)\}\{([^}]*)\}',r'<a class="tl" href="\1">\2</a>',t)
         t=re.sub(r'\\textbf\{([^}]*)\}',r'<b>\1</b>',t)
         t=re.sub(r'\\textit\{([^}]*)\}',r'<i>\1</i>',t)
-        t=t.replace('\\qed','<span class="qed">♡</span>')
+        t=t.replace('\\qed','<span class="qed">$\\heartsuit$</span>')
         t=re.sub(r'[ \t]+',' ',t)
         t=re.sub(r'\x00(\d+)\x00',lambda m:maths[int(m.group(1))],t)
         return t
@@ -37,7 +37,11 @@ def conv(path):
         for para in re.split(r'\n\s*\n',t):
             p=' '.join(x.strip() for x in para.strip().split('\n')).strip()
             if p: out.append(inline(p))
-    def disp(m): out.append('$$\n'+m.strip()+'\n$$')
+    def disp(m):
+        m=m.strip()
+        one=re.fullmatch(r'\\begin\{aligned\}\s*&(.*?)&(.*?)\\end\{aligned\}',m,re.S)
+        if one and '\\\\' not in m: m=one.group(1).strip()+' \\hspace{7em} '+one.group(2).strip()
+        out.append('$$\n'+m+'\n$$')
     for m in pat.finditer(main):
         text(main[pos:m.start()]); pos=m.end()
         if m.group(1) is not None:
@@ -48,7 +52,7 @@ def conv(path):
             parts=re.split(r'\\\[(.*?)\\\]',inner,flags=re.S)
             lead=parts[0].strip()
             head=f'<b>Theorem {sec}.{thm}</b>{name}<b>.</b>'
-            out.append(f'<div class="thm">\n\n{head}'+(f' <i>{inline(lead)}</i>' if lead else '')+'\n\n'+''.join(f'$$\n{parts[i].strip()}\n$$\n\n' for i in range(1,len(parts),2))+'</div>')
+            out.append(f'<div class="thm">\n\n{head}'+(f' <i>{inline(lead)}</i>' if lead else '')+'\n\n'+''.join(f'$$\n{parts[i].strip().replace(chr(92)+"text{", chr(92)+"textit{")}\n$$\n\n' for i in range(1,len(parts),2))+'</div>')
         elif m.group(4) is not None:
             inner=m.group(4).strip()
             sub=[]; p2=0
@@ -63,7 +67,7 @@ def conv(path):
                     if not p: continue
                     if first: p='<i>Proof.</i> '+p; first=False
                     out.append(inline(p))
-            out[-1]=out[-1]+' <span class="qed">♡</span>'
+            out[-1]=out[-1]+' <span class="qed">$\\heartsuit$</span>'
         elif m.group(5) is not None:
             items=[x.strip() for x in re.split(r'\\item',m.group(5)) if x.strip()]
             out.append('\n'.join(f'{i+1}. {inline(" ".join(it.split()))}' for i,it in enumerate(items)))

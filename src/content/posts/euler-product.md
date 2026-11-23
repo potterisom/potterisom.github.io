@@ -46,7 +46,7 @@ Although we do not yet know the answer or the proof to the Riemann hypothesis, w
 <b>Theorem 1.1</b> (Euler Product formula)<b>.</b>
 
 $$
-\zeta(s) = \sum_{n=1}^\infty \frac{1}{n^s}= \prod_{p \text{ prime}} \frac{1}{1-p^{-s}} .
+\zeta(s) = \sum_{n=1}^\infty \frac{1}{n^s}= \prod_{p \textit{ prime}} \frac{1}{1-p^{-s}} .
 $$
 
 </div>
@@ -113,4 +113,4 @@ $$
 \zeta(s) = \sum_{n=1}^\infty \frac{1}{n^s} = \prod_{p \text{ prime}} \frac{1}{1-p^{-s}} .
 $$
 
-We win! <span class="qed">♡</span>
+We win! <span class="qed">$\heartsuit$</span>
