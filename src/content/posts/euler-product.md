@@ -1,6 +1,6 @@
 ---
 title: "discover the Euler product formula"
-hand: "/hand/euler.png"
+hand: "/hand/euler.svg"
 order: 2
 date: "2025-11-30"
 pdf: "/docs/euler_product.pdf"

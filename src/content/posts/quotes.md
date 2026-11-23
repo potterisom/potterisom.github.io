@@ -1,6 +1,6 @@
 ---
 title: "quotes"
-hand: "/hand/quotes.png"
+hand: "/hand/quotes.svg"
 order: 6
 ---
 

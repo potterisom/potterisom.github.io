@@ -9,7 +9,7 @@ const posts = (await getCollection('posts')).sort((a, b) => a.data.order - b.dat
     <canvas class="fog" aria-hidden="true"></canvas>
     <div class="halo" aria-hidden="true"></div>
     <div class="center">
-      <h1><img src="/hand/name.png" alt="Leyla Salken" width="530" height="144" /></h1>
+      <h1><img src="/hand/name.svg" alt="Leyla Salken" width="530" height="144" /></h1>
       <p class="intro">i like math, asking questions, and making beautiful things</p>
       <nav aria-label="Recent posts">
         {posts.map((p, i) => <a class="post" href={`/${p.id}/`} data-note={i}>{p.data.title}</a>)}

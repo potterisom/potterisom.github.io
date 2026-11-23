@@ -2,6 +2,18 @@
 // The visitor's mute choice is remembered in localStorage ('ls-muted').
 
 let ac: AudioContext | null = null;
+
+// Browsers keep all page audio silent until the visitor's first click, tap or key press
+// (hovering doesn't count). So we start the audio engine on that very first gesture,
+// wherever it happens, and every hover after it can play.
+function unlock() {
+  try {
+    ac = ac || new (window.AudioContext || (window as any).webkitAudioContext)();
+    if (ac.state === 'suspended') ac.resume();
+  } catch { /* no audio */ }
+}
+for (const ev of ['pointerdown', 'keydown', 'touchstart'])
+  addEventListener(ev, unlock, { once: true, capture: true, passive: true });
 const KEY = 'ls-muted';
 
 export function isMuted(): boolean {

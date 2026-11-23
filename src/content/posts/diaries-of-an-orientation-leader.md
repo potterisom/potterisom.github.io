@@ -1,6 +1,6 @@
 ---
 title: "diaries of an orientation leader"
-hand: "/hand/orientation.png"
+hand: "/hand/orientation.svg"
 order: 4
 date: "2024-08-28"
 ---

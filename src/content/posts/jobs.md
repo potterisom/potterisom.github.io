@@ -1,6 +1,6 @@
 ---
 title: "i work jobs"
-hand: "/hand/jobs.png"
+hand: "/hand/jobs.svg"
 order: 7
 ---
 

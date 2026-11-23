@@ -1,6 +1,6 @@
 ---
 title: "the joy of living with roommates"
-hand: "/hand/roommates.png"
+hand: "/hand/roommates.svg"
 order: 3
 date: "2025-08-04"
 ---

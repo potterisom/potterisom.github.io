@@ -1,6 +1,6 @@
 ---
 title: "assigning sizes to subsets of ℤ"
-hand: "/hand/z.png"
+hand: "/hand/z.svg"
 order: 1
 date: "2026-11-23"
 pdf: "/docs/assigning_sizes_subsets_of_z.pdf"

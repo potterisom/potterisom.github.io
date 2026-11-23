@@ -1,6 +1,6 @@
 ---
 title: "i write piano arrangements"
-hand: "/hand/piano.png"
+hand: "/hand/piano.svg"
 order: 5
 ---
 

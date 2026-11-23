@@ -12,7 +12,7 @@ const posts = defineCollection({
   schema: z.object({
     /** The title as text: used in the sidebar, on the home page and for screen readers. */
     title: z.string(),
-    /** Handwritten title image shown at the top of the post, e.g. /hand/z.png */
+    /** Handwritten title image shown at the top of the post, e.g. /hand/z.svg (vector) */
     hand: z.string().optional(),
     /** Position in the list (1 = first). The home page shows the first four. */
     order: z.number(),
