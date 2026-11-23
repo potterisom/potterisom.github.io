@@ -28,8 +28,9 @@ function setMuted(m: boolean) {
 export function note(f: number) {
   if (isMuted()) return;
   try {
-    ac = ac || new (window.AudioContext || (window as any).webkitAudioContext)();
-    if (ac.state === 'suspended') ac.resume();
+    // Before the first click the audio engine is asleep. Anything scheduled then would
+    // pile up and all play at once when it wakes, so skip those hovers instead.
+    if (!ac || ac.state !== 'running') return;
     const A = ac, t = A.currentTime;
     const out = A.createGain(); out.gain.value = 0.26;
     const lp = A.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 0.6;
