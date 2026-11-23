@@ -1,0 +1,324 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Don't change this stuff... %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt,reqno]{amsart}
+
+% Import useful packages
+\usepackage{array}
+\usepackage{graphics}
+\usepackage{amssymb, amsthm, amsmath, amsfonts,amscd}
+\usepackage{multicol}
+\usepackage[normalem]{ulem}
+\usepackage{xfrac}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{comment}
+\usepackage{tikz-cd}
+\usetikzlibrary{calc, positioning, matrix, arrows, decorations.pathmorphing, shapes, backgrounds}
+\usepackage{pgf}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.6}
+\usepackage{lpic}
+%\usepackage{float}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{pgfornament}
+
+% Set margins and other page properties
+\setlength{\paperwidth}{8.5in}
+\setlength{\paperheight}{11in}
+\setlength{\voffset}{-0.15in}
+\setlength{\topmargin}{0in}
+\setlength{\headheight}{12pt}
+\setlength{\headsep}{8pt}
+\setlength{\footskip}{30pt}
+\setlength{\textheight}{8.5in}
+\setlength{\hoffset}{0in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\parindent}{0in}
+\setlength{\parskip}{9pt}
+
+\setcounter{section}{-1} % This numbers the first section as Section 0.
+
+% Theorem environments
+\newenvironment{answer}{\color{Blue}}{\color{Black}}
+\newenvironment{exercise}
+{\color{Blue}\begin{exr}}{\end{exr}\color{Black}}
+
+\theoremstyle{plain} %italicizes text
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{prop}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{cor}[theorem]{Corollary}
+\newtheorem{conj}[theorem]{Conjecture}
+\newtheorem*{claim}{Claim}
+\newtheorem*{question}{Question}
+\newtheorem*{conv}{Convention}
+
+\theoremstyle{remark}
+\newtheorem{exr}{Exercise}
+\newtheorem*{rmk}{Remark}
+
+\theoremstyle{definition}
+\newtheorem*{defn}{Definition}
+\newtheorem{example}{Example}
+
+\newtheorem*{FTA}{Fundamental Theorem of Algebra}
+
+% Fancy letters
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\N}{\mathbb N}
+\newcommand{\R}{\mathbb R}
+\renewcommand{\P}{\mathbb P}
+\newcommand{\C}{\mathbb C}
+\newcommand{\E}{\mathbb E}
+\newcommand{\F}{\mathbb F}
+\newcommand{\D}{\mathbb D}
+\newcommand{\Ac}{\mathcal A}
+\newcommand{\Bc}{\mathcal B}
+\newcommand{\Cc}{\mathcal C}
+\newcommand{\Ec}{\mathcal E}
+\newcommand{\Fc}{\mathcal F}
+\newcommand{\Hc}{\mathcal H}
+\newcommand{\Lc}{\mathcal L}
+\newcommand{\Oc}{\mathcal O}
+\newcommand{\Rc}{\mathcal R}
+\newcommand{\Sc}{\mathcal S}
+\newcommand{\Zc}{\mathcal Z}
+\renewcommand{\a}{\alpha}
+\renewcommand{\b}{\beta}
+\newcommand{\g}{\gamma}
+\renewcommand{\d}{\delta}
+\newcommand{\e}{\epsilon}
+\newcommand{\z}{\zeta}
+\renewcommand{\t}{\theta}
+\renewcommand{\l}{\lambda}
+\newcommand{\s}{\sigma}
+\renewcommand{\o}{\omega}
+
+% Arrows
+\newcommand{\isom}{\xrightarrow{\sim}}
+\newcommand{\bijectarrow}{
+  \hookrightarrow\mathrel{\mspace{-15mu}}\rightarrow
+}
+\newcommand{\surjectarrow}{
+  \rightarrow\mathrel{\mspace{-15mu}}\rightarrow
+}
+\newcounter{sarrow}
+\newcommand\xrsquigarrow[1]{
+    \stepcounter{sarrow}
+    \begin{tikzpicture}[decoration=snake]
+    \node (\thesarrow) {\strut#1};
+    \draw[->,decorate] (\thesarrow.south west) -- (\thesarrow.south east);
+    \end{tikzpicture}
+}
+
+% Functions and operators
+\newcommand{\one}{
+    {\rm 1\hspace*{-0.4ex} \rule{0.1ex}{1.52ex}\hspace*{0.2ex}}
+}
+\newcommand{\wt}[1]{\widetilde{#1}}
+\newcommand{\wh}[1]{\widehat{#1}}
+\newcommand{\cbrt}[1]{\sqrt[3]{#1}}
+\newcommand{\floor}[1]{\left\lfloor#1\right\rfloor}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\im}{\textup{im }}
+\renewcommand{\ker}{\textup{ker }}
+\newcommand{\ord}{\textup{ord}}
+\newcommand{\supp}{\textup{supp}}
+\renewcommand{\Im}{\textup{Im }}
+\renewcommand{\Re}{\textup{Re }}
+\newcommand{\area}{\textup{area }}
+\renewcommand{\bar}{\overline}
+
+% Relations
+\newcommand{\ns}{\mathrel{\lhd}}
+\newcommand{\nsup}{\mathrel{\rhd}}
+\newcommand{\nseq}{\mathrel{\unlhd}}
+\newcommand{\nsupeq}{\mathrel{\unrhd}}
+\renewcommand{\mod}[1]{\textup{ (mod~$#1$)}}
+\newcommand{\textmod}[1]{(mod \nolinebreak $#1$)}
+
+\newsymbol\dnd 232D
+\newcommand{\divides}{\Bigm \vert}
+\newcommand{\ndivides}{
+    \mathrel{\mkern.5mu % small adjustment
+    % superimpose \nmid to \big|
+    \ooalign{\hidewidth$\biggm\vert$\hidewidth\cr$\nmid$\cr}%
+    }
+}
+
+% Other
+\newcommand{\ds}{\displaystyle}
+\newcommand{\Hom}{\textup{Hom}}
+\newcommand{\mattwo}[4]{
+    \begin{pmatrix} #1 & #2 \\ #3 & #4 \end{pmatrix}
+}
+\newcommand\myasterismi{%
+  \par\bigskip\noindent\hfill\pgfornament[width=17pt]{7}\hfill\null\par\bigskip
+}
+\newcommand\myasterismii{%
+  \par\bigskip\noindent\hfill\pgfornament[width=17pt]{1}\hfill\null\par\bigskip
+}
+\newcommand\myasterismiii{%
+  \par\bigskip\noindent\hfill\pgfornament[width=17pt]{4}\hfill\null\par\bigskip
+}
+\newcommand*\circled[1]{
+    \tikz[baseline=(char.base)]{
+    \node[shape=circle,draw,inner sep=2pt] (char) {#1};}
+}
+\newcommand*\squared[1]{
+    \tikz[baseline=(char.base)]{
+    \node[shape=rectangle,draw,inner sep=2pt] (char) {#1};}
+}
+
+\newcommand{\ignore}[1]{}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+    % pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+}
+
+\renewcommand{\qedsymbol}{$\heartsuit$}
+
+
+
+% Formatting spacing
+\newcommand{\removeline}{\vspace{-0.12in}}
+
+
+% Begin document
+\begin{document}
+
+% Set pagestyle
+\pagestyle{headings}{
+\lhead{Math 350} \chead{} \rhead{Johannes Doe}
+\lfoot{} \cfoot{\thepage} \rfoot{}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%%  Below this is    %%
+%%  where you write  %%
+%%  the summary!     %%
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\title{Assigning sizes to subsets of $\Z$}
+\author{Leyla Salken}
+% \thanks{Template by Leo Goldmakher}
+\date{\today}
+
+\begin{abstract}
+This is a write-up of my friend \href{https://navo.dev/}{\textbf{Nathan Vosburg}}'s math colloquium talk given on September 30, 2026. I thought it was very neat and wrote this to make sure I remember it. I assume familiarity with real analysis (in particular, limits of sequences).
+All ideas are Nathan's, all mistakes are mine.
+\end{abstract}
+
+\maketitle
+\thispagestyle{empty}
+
+\numberwithin{equation}{section}
+\vspace{-1cm}
+\section{Motivation} \label{sect:0}
+
+Suppose I give you a subset of $\Z$. How would you go about determining its size? If it's a finite set, say of size $n$, then we could just assign a size of $n$ to that set. But what if I give you an infinite set, like all the even integers? 
+
+Intuitively, evens make up $1/2$ of all integers, so perhaps their size should reflect that. How do we formalize this logic?
+
+\section{Intuition}
+For a given set $A \subseteq \Z$, let's look at the sequence of its symmetric densities:
+\[
+m_n = \frac{\left| A \cap [-n,n]\right|}{2n+1}.
+\]
+As $n$ tends to infinity, we should get the density $m$ of $A$ in $\Z$, which should give us its relative size:
+\[
+m = \lim_{n \rightarrow \infty } m_n
+\]
+For some sets this works well:
+the evens would have size $1/2$, and sets like $d\Z$ have size $1/d$. The primes have size 0, and any finite set would also have size 0 (why?). 
+
+However, consider the following subset of $\Z$: 
+\[
+\{z \in \Z : z \text{ has an odd number of digits}\} .
+\]
+Turns out the sequence of densities of this set does not converge, it oscillates between $1/11$ and $10/11$. This is because there are bigger and bigger inclusions and exlusions (this set includes 1-9, excludes 10-99, includes 100-999, etc.). 
+
+How do we amend this if we want to have a function that can assign sizes to \textit{any} subset of $\Z$? 
+
+In the traditional sense of the limit, we only consider a sequence (of densities in this context) convergent if it gets very close to a value and \textit{stays} there. But our example with oscillating densities seems to not stay anywhere forever. So what if instead of staying in a neighborhood, we only required the sequence to be in that neighborhood \textit{very often}? 
+
+To do this, we can redefine our notion of a limit.
+
+\section{What's the problem with limits?}
+Recall from real analysis that a real sequence $a_n$ converges to $a$ if and only if given $\e>0$, we can find $ N \in \N $ such that for all $n>N$ we have $|a_n-a|< \e$. 
+
+In other words, there are finitely many indices at which $a_n$ is more than $\e$ far from $a$, i.e., the set $\{n \in \N : |a_n-a|\geq \e \}$ is finite.
+This is the same as saying that its complement, the set $\{n \in \N : |a_n-a|< \e \}$, is \textit{cofinite} (i.e., has a finite complement). 
+
+Thus an equivalent definition of a limit of a sequence is that given $\e >0$, we say $a_n$ converges to $a$ if the set $\{n \in \N : |a_n-a|< \e \}$ is \textit{cofinite}.
+
+But cofiniteness is a strong restriction. What if instead of being cofinite, this set was just \textbf{``big"}? Like if $a_n$ was arbitrarily close to $a$ on many, many indices $n$ (but perhaps not cofinitely many). This would probably help, since it would be enough for our sequence of densities hit some value ``often". 
+
+\section{What should the ``big" sets be?}
+We want to redefine what a big set of indices is. Let $U$ be the collection of all such big sets. What should be true about $U$? 
+We want it to have the following properties: 
+\begin{enumerate}
+    \item $\varnothing \not\in U$ (since $\varnothing$ should not be a big set). 
+    \item If $A \in U$ (i.e., $A$ is a big set) and $A\subseteq B$, then $B$ must also be a big set, therefore $B \in U$. 
+    \item To be able to add limits and stuff, for any $A \in U, B \in U$ we want $A\cap B \in U$.
+    \item For any $A \subseteq \N$ we have $A \in U$ or $A^C \in U$. 
+\end{enumerate}
+We call such $U$ an \textbf{ultrafilter}\footnote{The first 3 conditions define a filter.}.  
+Notice that 1st, 3rd and 4th condition together imply that only $A$ or $A^C$, but not both, can live in $U$. 
+
+We still want the traditionally convergent sequences to converge under our new limit definition. To force this, we will only consider \textbf{nonprincipal ultrafilters}, which are the ultrafilters that contain all cofinite subsets of $\N$ (we will refer to them as simply ultrafilters). 
+
+\section{Redefining the limit}
+Now that we have ultrafilters, let's redefine our limits. All we need to do is re-formulate the limit definition. 
+
+Given a sequence $a_n \subseteq \R$ and an ultrafilter $U$, we say $a_n$ ultra-converges to $a$ if for any $\e >0$, the set $\{n \in \N : |a_n-a|< \e \} \in U$. We call $a$ an \textbf{ultralimit} of $a_n$ under $U$.
+
+\begin{theorem}
+    Given an ultrafilter $U$ and a real bounded sequence $c_n$, there exists a unique ultralimit. 
+\end{theorem}
+
+Sketch of the proof: take a compact set that contains the sequence, and keep zooming in on the parts that contain a ``big" (in the ultrafilter sense) chunk of the sequence. Since you keep zooming in indefinitely, in the limit this zoom  will contain one number - precisely the limit of the sequence. 
+
+\begin{proof}
+We attack existence first. We construct a sequence of intervals $I_k$, with $I_0 = [a,b]$ (where $(c_n) \subseteq  [a,b]$ for some $a,b$). The sequence of intervals will help us zoom in on the section of the interval where the sequence is ``bunching up". 
+
+Let $I_k = [a_k, b_k]$.  Let $m_k = \frac{a_k+b_k}{2}$ be the midpoint of the interval $I_k$. Then set the left and right-half intervals:
+\begin{align*}
+&L_k = [a_k, m_k]&        R_k=[m_k,b_k],
+\end{align*}
+so that $I_k = L_k \cup R_k$.
+
+Set $I_{k+1} = L_k$ if $\{n: c_n \in L_k\}  \in U$, otherwise $I_{k+1}=R_k$. 
+
+Since $(c_n)\subseteq [a,b] = I_0$, then $\{n:c_n \in I_0\} \in U$. Now, suppose that $\{n: c_n \in I_k\} \in U$. Then either $\{n: c_n \in L_k\}  \in U$ or $\{n: c_n \in R_k\}  \in U$ (can be both, not neither). Since $I_{k+1} = L_k$ or $R_k$, $\{n : c_n \in I_{k+1}\} \in U$. Therefore, $\{n:c_n \in I_k\}\in U$ for all $k$.
+
+Since $a_0\leq a_1 \leq \cdots \leq b_1\leq b_0$, and $|a_k-b_k| = \frac{|a_0-b_0|}{2^k}\rightarrow 0$ as $k \rightarrow \infty $, the sequences $(a_k)$ and $(b_k)$ must both be converging (by convergence of monotonic bounded sequences) to the same number $L = \lim a_k = \lim b_k$, and $L \in \bigcap_{k=0}^\infty  I_k$.
+
+Let $\e >0$. Then $\exists k$ such that $|b_k-a_k| < \e/2$, and since $a_k\leq L\leq b_k$, we have \[|L-a_k| < \e/2.\]
+On the other hand, let $m \in \{n : c_n \in I_k\} \in U$. Then $a_k\leq c_m \leq b_k$ and so 
+\[|a_k-c_m|<\e/2 .\]
+Thus \[|L-c_m| \leq |L-a_k|+|a_k-c_m| < \e .\]
+Therefore, $\{n : |L-c_n| <\e \} \in U$, and that completes proof of existence.
+
+Suppose $c_n \rightarrow L$ and $c_n \rightarrow L'$. Then $\{n:|L-c_n|<\frac{|L-L'|}{3}\} \in U$ and $\{n:|L'-c_n|<\frac{|L-L'|}{3}\} \in U$. By property 3, their intersection must also live in $U$, but their intersection is the empty set, which cannot be in $U$ by property 1. This is a contradiction, hence the limit is unique and that concludes our proof.
+\end{proof}
+
+\section{Wins}
+Wait, this is awesome! Now we have an instrument to find a limit of \textit{any} bounded real sequence. So, alternating sequences like $0,1,0,1,0,1, \cdots$ will always converge, since either the odd or even indices have to be in the ultrafilter. Also, going back to our example of with the subset of all integers that have an odd number of digits, that sequence will also converge to some value, which means we can assign a size to it. 
+
+One caveat here is that you can always choose an ultrafilter that you like, so in the example above you can make your sequence converge to either 0 or 1 under the same ultrafilter if you shift it by 1 index and make it $1,0,1,0,1,0,\cdots $. This is a little silly, but it is a useful tool.
+\end{document}

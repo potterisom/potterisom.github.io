@@ -19,6 +19,11 @@ const posts = defineCollection({
     date: z.coerce.date().optional(),
     /** Link to a PDF version, e.g. /docs/euler_product.pdf */
     pdf: z.string().optional(),
+    /** Math papers: typeset like the amsart PDF. Title may contain LaTeX, e.g. "Assigning sizes to subsets of $\\Z$". */
+    paperTitle: z.string().optional(),
+    author: z.string().optional(),
+    /** The \\thanks{} line, shown as a footnote. */
+    thanks: z.string().optional(),
   }),
 });
 

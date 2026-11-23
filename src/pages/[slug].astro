@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
 import 'katex/dist/katex.min.css';
 import fs from 'node:fs';
+import katex from 'katex';
+import { macros } from '../../astro.config.mjs';
 
 export async function getStaticPaths() {
   const posts = (await getCollection('posts')).sort((a, b) => a.data.order - b.data.order);
@@ -10,6 +12,13 @@ export async function getStaticPaths() {
 }
 const { post, posts } = Astro.props;
 const { Content } = await render(post);
+// Paper title: plain text with $...$ math, typeset like the amsart title.
+const paperTitleHtml = post.data.paperTitle
+  ?.split(/(\$[^$]+\$)/)
+  .map((part) => part.startsWith('$')
+    ? katex.renderToString(part.slice(1, -1), { throwOnError: true, macros: { ...macros } })
+    : part.replace(/&/g, '&amp;').replace(/</g, '&lt;'))
+  .join('');
 // Handwritten titles share one scale, so the letters are the same size on every page.
 let handWidth: number | undefined;
 if (post.data.hand) {
@@ -32,12 +41,25 @@ const dateText = d ? d.toLocaleDateString('en-US', { month: 'long', day: 'numeri
       </nav>
     </aside>
     <main>
-      <article>
-        <h1>{post.data.hand ? <img src={post.data.hand} alt={post.data.title} style={handWidth ? `width:min(${handWidth}px,100%)` : undefined} /> : post.data.title}</h1>
-        <Content />
-        {dateText && <p class="dt">{dateText}</p>}
-        {post.data.pdf && <p><a class="ln" href={post.data.pdf}>pdf ↗</a></p>}
-      </article>
+      {post.data.paperTitle ? (
+        <article class="paper">
+          <h1 class="ptitle" set:html={paperTitleHtml} />
+          {post.data.author && <p class="pauthor">{post.data.author}</p>}
+          <Content />
+          <div class="pfoot">
+            {dateText && <p><i>Date</i>: {dateText}.</p>}
+            {post.data.thanks && <p>{post.data.thanks}</p>}
+          </div>
+          {post.data.pdf && <p class="pdf"><a class="ln" href={post.data.pdf}>pdf ↗</a></p>}
+        </article>
+      ) : (
+        <article>
+          <h1>{post.data.hand ? <img src={post.data.hand} alt={post.data.title} style={handWidth ? `width:min(${handWidth}px,100%)` : undefined} /> : post.data.title}</h1>
+          <Content />
+          {dateText && <p class="dt">{dateText}</p>}
+          {post.data.pdf && <p><a class="ln" href={post.data.pdf}>pdf ↗</a></p>}
+        </article>
+      )}
     </main>
   </div>
 </Base>
@@ -62,7 +84,7 @@ const dateText = d ? d.toLocaleDateString('en-US', { month: 'long', day: 'numeri
   article :global(.ab){font-size:15.5px;line-height:1.55;margin:0 0 1.6em;padding:0 28px}
   article :global(.sc){font-variant:small-caps;font-weight:700}
   article :global(.katex-display){overflow-x:auto;overflow-y:hidden;margin:.5em 0 1em;padding:.1em 0}
-  article :global(.katex){font-size:1.02em}
+  article :global(.katex){font-size:1em}
   article :global(ol),article :global(ul){margin:.2em 0 1em;padding-left:1.4em}
   article :global(li){margin:0 0 .5em}
   article :global(.qed){float:right;margin-left:1em}
@@ -76,6 +98,29 @@ const dateText = d ? d.toLocaleDateString('en-US', { month: 'long', day: 'numeri
   article :global(.job h2){margin:1.2em 0 .1em;font-size:18px}
   article :global(.rl){margin:0 0 .4em;font-style:italic;font-size:14.5px;color:#5a5448}
   article :global(.job ul){font-size:15.5px;line-height:1.5}
+
+  /* ---------- papers: typeset like the amsart PDFs ---------- */
+  .paper{text-align:justify;hyphens:auto;-webkit-hyphens:auto;line-height:1.38}
+  .paper :global(p){margin:0 0 .75em}
+  .ptitle{margin:0;text-align:center;font-weight:700;text-transform:uppercase;font-size:1em;line-height:1.4;color:var(--ink)}
+  .pauthor{margin:1.6em 0 2.6em;text-align:center;text-transform:uppercase;font-family:'LM Roman 10',var(--serif);font-size:.83em}
+  .paper :global(.ab){margin:0 3em 2.2em;padding:0;font-family:'LM Roman 10',var(--serif);font-size:.83em;line-height:1.38}
+  .paper :global(.ab p){margin:0}
+  .paper :global(.sc){font-family:'LM Roman Caps 10',var(--serif);font-weight:400;font-variant:normal}
+  .paper :global(h2.sec){margin:1.9em 0 1em;text-align:center;font-family:'LM Roman Caps 10',var(--serif);font-weight:400;font-size:1em;color:var(--ink);line-height:1.4}
+  .paper :global(.tl){color:#0000ff;text-decoration:none}
+  .paper :global(.thm){margin:1em 0 1.2em}
+  .paper :global(.thm p){margin:0}
+  .paper :global(.katex-display){margin:.6em 0}
+  .paper :global(ol){padding-left:2.4em}
+  .paper :global(li){margin:0 0 .25em;padding-left:.3em}
+  .paper :global(.footnotes),.pfoot{font-family:'LM Roman 10',var(--serif);font-size:.83em;border-top:none;margin-top:2.4em;padding-top:0}
+  .paper :global(.footnotes)::before,.pfoot::before{content:"";display:block;width:8em;border-top:1px solid var(--ink);margin-bottom:.5em}
+  .paper :global(.footnotes) + .pfoot{margin-top:.4em}
+  .paper :global(.footnotes) + .pfoot::before{display:none}
+  .pfoot p{margin:0 0 .2em;text-align:left}
+  .paper .pdf{margin-top:2em}
+  @media (max-width:900px){ .paper :global(.ab){margin:0 0 1.8em} }
 
   @media (max-width:900px){
     .page{flex-direction:column}

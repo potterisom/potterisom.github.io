@@ -11,7 +11,7 @@ const posts = (await getCollection('posts')).sort((a, b) => a.data.order - b.dat
     <div class="center">
       <h1><img src="/hand/name.svg" alt="Leyla Salken" width="530" height="144" /></h1>
       <nav aria-label="Recent posts">
-        {posts.map((p, i) => <a class="post" href={`/${p.id}/`} data-note={i}>{p.data.title}</a>)}
+        {posts.map((p, i) => <a class="post imp" href={`/${p.id}/`} data-note={i}>{p.data.title}</a>)}
       </nav>
     </div>
   </main>
@@ -31,8 +31,11 @@ const posts = (await getCollection('posts')).sort((a, b) => a.data.order - b.dat
   h1 img{width:min(530px,82vw);height:auto;display:block}
   nav{display:flex;flex-direction:column;align-items:center;gap:8px}
   .post{display:inline-flex;align-items:center;min-height:38px;padding:6px 18px;border-radius:999px;font-size:16.5px;font-family:var(--sans);color:var(--soft);text-decoration:none;
-    background:rgba(255,250,253,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background .35s ease,color .35s ease}
-  .post:hover,.post:focus-visible{background:#1c2340;color:#fbf6ee}
+    background:rgba(255,250,253,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:color .35s ease}
+    .post{--paint:#1c2340}
+  .post:hover,.post:focus-visible{color:#fbf6ee;transition:color .5s ease .15s}
+  /* same spill as the sidebar; a bigger main puddle so it covers the wider button sooner */
+  .post:hover::before,.post:focus-visible::before{--r0:900px}
   @media (max-width:600px){ .post{font-size:15.5px} }
   @media (prefers-reduced-motion: reduce){ .photo,.halo{animation:none} }
 </style>
@@ -40,6 +43,8 @@ const posts = (await getCollection('posts')).sort((a, b) => a.data.order - b.dat
 <script>
   import { startFog } from '../scripts/fog';
   import { wireSound, homeNote } from '../scripts/sound';
+  import { wirePaint } from '../scripts/paint';
+  wirePaint();
   startFog(document.querySelector('.fog') as HTMLCanvasElement);
   wireSound(homeNote);
 </script>
