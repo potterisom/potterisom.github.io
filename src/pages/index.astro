@@ -10,7 +10,6 @@ const posts = (await getCollection('posts')).sort((a, b) => a.data.order - b.dat
     <div class="halo" aria-hidden="true"></div>
     <div class="center">
       <h1><img src="/hand/name.svg" alt="Leyla Salken" width="530" height="144" /></h1>
-      <p class="intro">i like math, asking questions, and making beautiful things</p>
       <nav aria-label="Recent posts">
         {posts.map((p, i) => <a class="post" href={`/${p.id}/`} data-note={i}>{p.data.title}</a>)}
       </nav>
@@ -28,14 +27,13 @@ const posts = (await getCollection('posts')).sort((a, b) => a.data.order - b.dat
     transform:translate(-50%,-50%);animation:breathe 7s ease-in-out infinite alternate}
   @keyframes breathe{from{transform:translate(-50%,-50%) scale(.97)}to{transform:translate(-50%,-50%) scale(1.04)}}
   .center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(620px,90vw);display:flex;flex-direction:column;align-items:center;text-align:center}
-  h1{margin:0;line-height:0}
+  h1{margin:0 0 28px;line-height:0}
   h1 img{width:min(530px,82vw);height:auto;display:block}
-  .intro{margin:14px 0 26px;font-size:22px;color:#22283f}
   nav{display:flex;flex-direction:column;align-items:center;gap:8px}
-  .post{display:inline-flex;align-items:center;min-height:38px;padding:6px 18px;border-radius:999px;font-size:17.5px;color:var(--soft);text-decoration:none;
+  .post{display:inline-flex;align-items:center;min-height:38px;padding:6px 18px;border-radius:999px;font-size:16.5px;font-family:var(--sans);color:var(--soft);text-decoration:none;
     background:rgba(255,250,253,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background .35s ease,color .35s ease}
   .post:hover,.post:focus-visible{background:#1c2340;color:#fbf6ee}
-  @media (max-width:600px){ .intro{font-size:19px} .post{font-size:16.5px} }
+  @media (max-width:600px){ .post{font-size:15.5px} }
   @media (prefers-reduced-motion: reduce){ .photo,.halo{animation:none} }
 </style>
 

@@ -9,6 +9,7 @@
     "preview": "astro preview"
   },
   "dependencies": {
+    "@fontsource/karla": "^5.3.0",
     "astro": "^5",
     "katex": "^0.16.22",
     "rehype-katex": "^7.0.1",

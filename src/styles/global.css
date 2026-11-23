@@ -3,7 +3,7 @@
 @font-face{font-family:'LM Roman 12';src:url(/fonts/lm12-italic.woff2) format('woff2');font-style:italic;font-display:swap}
 @font-face{font-family:'LM Roman 12';src:url(/fonts/lm12-bold.woff2) format('woff2');font-weight:700;font-display:swap}
 @font-face{font-family:'LM Roman 17';src:url(/fonts/lm17-regular.woff2) format('woff2');font-display:swap}
-:root{--ink:#141210;--navy:#121831;--soft:#454d72;--paper:#FBF6EE;--serif:'LM Roman 12','Latin Modern Roman','CMU Serif',serif}
+:root{--sans:'Karla',system-ui,sans-serif;--ink:#141210;--navy:#121831;--soft:#454d72;--paper:#FBF6EE;--serif:'LM Roman 12','Latin Modern Roman','CMU Serif',serif}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{font-family:var(--serif);color:var(--ink);background:var(--paper)}
