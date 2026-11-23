@@ -31,8 +31,10 @@ const posts = (await getCollection('posts')).sort((a, b) => a.data.order - b.dat
   h1{margin:0;line-height:0}
   h1 img{width:min(530px,82vw);height:auto;display:block}
   .intro{margin:14px 0 26px;font-size:22px;color:#22283f}
-  nav{display:flex;flex-direction:column;align-items:center;gap:4px}
-  .post{display:inline-flex;align-items:center;min-height:44px;padding:6px 4px;font-size:21px;color:var(--soft);text-decoration:none}
+  nav{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .post{display:inline-flex;align-items:center;min-height:44px;padding:9px 24px;border-radius:999px;font-size:21px;color:var(--soft);text-decoration:none;
+    background:rgba(255,250,253,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background .35s ease,color .35s ease}
+  .post:hover,.post:focus-visible{background:#1c2340;color:#fbf6ee}
   @media (max-width:600px){ .intro{font-size:19px} .post{font-size:19px} }
   @media (prefers-reduced-motion: reduce){ .photo,.halo{animation:none} }
 </style>
